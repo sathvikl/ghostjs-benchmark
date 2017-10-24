@@ -1,0 +1,650 @@
+-- MySQL dump 10.13  Distrib 5.5.40, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: ghost_db
+-- ------------------------------------------------------
+-- Server version	5.5.40-0ubuntu1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `accesstokens`
+--
+
+DROP TABLE IF EXISTS `accesstokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `accesstokens` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `client_id` int(10) unsigned NOT NULL,
+  `expires` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `accesstokens_token_unique` (`token`),
+  KEY `accesstokens_user_id_foreign` (`user_id`),
+  KEY `accesstokens_client_id_foreign` (`client_id`),
+  CONSTRAINT `accesstokens_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
+  CONSTRAINT `accesstokens_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `accesstokens`
+--
+
+LOCK TABLES `accesstokens` WRITE;
+/*!40000 ALTER TABLE `accesstokens` DISABLE KEYS */;
+INSERT INTO `accesstokens` VALUES (5,'fFtuH8EsorgOPR73KF1Ddy7mqntol9310kIt9olEr1ckmdpm0tAHIasIZAr1vDBMLWxiN5hOjmGJEbSOKb9Ifx0VCjZHCitkCxDM5lBSafsEJTjdtWZ0i7hTrJ8ztoNMyGDlCSEAgl4rXroNh0XerncJJrxrXy2iobeSJv7A1S9cYQPL4ZddrXXYaPZKjxRiFFOhydfxvQ2blx4r3zYJpBJ51RyRguKebx9n28LOGYccGGClndWSMdCULkeN1fz',1,1,1495452559617);
+/*!40000 ALTER TABLE `accesstokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `app_fields`
+--
+
+DROP TABLE IF EXISTS `app_fields`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `app_fields` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `key` varchar(150) NOT NULL,
+  `value` text,
+  `type` varchar(150) NOT NULL DEFAULT 'html',
+  `app_id` int(10) unsigned NOT NULL,
+  `relatable_id` int(10) unsigned NOT NULL,
+  `relatable_type` varchar(150) NOT NULL DEFAULT 'posts',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `app_fields_app_id_foreign` (`app_id`),
+  CONSTRAINT `app_fields_app_id_foreign` FOREIGN KEY (`app_id`) REFERENCES `apps` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_fields`
+--
+
+LOCK TABLES `app_fields` WRITE;
+/*!40000 ALTER TABLE `app_fields` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_fields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `app_settings`
+--
+
+DROP TABLE IF EXISTS `app_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `app_settings` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `key` varchar(150) NOT NULL,
+  `value` text,
+  `app_id` int(10) unsigned NOT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `app_settings_key_unique` (`key`),
+  KEY `app_settings_app_id_foreign` (`app_id`),
+  CONSTRAINT `app_settings_app_id_foreign` FOREIGN KEY (`app_id`) REFERENCES `apps` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_settings`
+--
+
+LOCK TABLES `app_settings` WRITE;
+/*!40000 ALTER TABLE `app_settings` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `apps`
+--
+
+DROP TABLE IF EXISTS `apps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `apps` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `slug` varchar(150) NOT NULL,
+  `version` varchar(150) NOT NULL,
+  `status` varchar(150) NOT NULL DEFAULT 'inactive',
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `apps_name_unique` (`name`),
+  UNIQUE KEY `apps_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `apps`
+--
+
+LOCK TABLES `apps` WRITE;
+/*!40000 ALTER TABLE `apps` DISABLE KEYS */;
+/*!40000 ALTER TABLE `apps` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `client_trusted_domains`
+--
+
+DROP TABLE IF EXISTS `client_trusted_domains`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `client_trusted_domains` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `client_id` int(10) unsigned NOT NULL,
+  `trusted_domain` varchar(2000) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `client_trusted_domains_client_id_foreign` (`client_id`),
+  CONSTRAINT `client_trusted_domains_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `client_trusted_domains`
+--
+
+LOCK TABLES `client_trusted_domains` WRITE;
+/*!40000 ALTER TABLE `client_trusted_domains` DISABLE KEYS */;
+/*!40000 ALTER TABLE `client_trusted_domains` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clients`
+--
+
+DROP TABLE IF EXISTS `clients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `slug` varchar(150) NOT NULL,
+  `secret` varchar(150) NOT NULL,
+  `redirection_uri` varchar(2000) DEFAULT NULL,
+  `logo` varchar(2000) DEFAULT NULL,
+  `status` varchar(150) NOT NULL DEFAULT 'development',
+  `type` varchar(150) NOT NULL DEFAULT 'ua',
+  `description` varchar(200) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `clients_name_unique` (`name`),
+  UNIQUE KEY `clients_slug_unique` (`slug`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clients`
+--
+
+LOCK TABLES `clients` WRITE;
+/*!40000 ALTER TABLE `clients` DISABLE KEYS */;
+INSERT INTO `clients` VALUES (1,'dbbb7053-f8c5-4fc8-8a4b-4d39708642cb','Ghost Admin','ghost-admin','8a4f015ca490',NULL,NULL,'enabled','ua',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(2,'e7d06ab1-22bd-407c-a0d9-455961118fb6','Ghost Frontend','ghost-frontend','03e384cb08e6',NULL,NULL,'enabled','ua',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(3,'458d2ac2-a1ff-4c36-862b-e68116b21481','Ghost Scheduler','ghost-scheduler','6020b9213d7d',NULL,NULL,'enabled','web',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1);
+/*!40000 ALTER TABLE `clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions`
+--
+
+DROP TABLE IF EXISTS `permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `object_type` varchar(150) NOT NULL,
+  `action_type` varchar(150) NOT NULL,
+  `object_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions`
+--
+
+LOCK TABLES `permissions` WRITE;
+/*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
+INSERT INTO `permissions` VALUES (1,'864dbfeb-091d-4db8-b2e9-87ed66c41f32','Export database','db','exportContent',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(2,'9018d215-1a56-4ebd-a5c9-edcd2e776cbe','Import database','db','importContent',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(3,'7a4d3eaa-6604-4db7-ba51-ec6bc236fddc','Delete all content','db','deleteAllContent',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(4,'4f0bad19-cb43-4104-a693-2fc0545daaf4','Send mail','mail','send',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(5,'8ae13bd6-7c74-4762-9611-c7da284d451b','Browse notifications','notification','browse',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(6,'e76a5bc0-ea56-41dd-84fd-82a4cbde9b11','Add notifications','notification','add',NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(7,'70267d13-6410-48e7-a174-74c38becf607','Delete notifications','notification','destroy',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(8,'ca204502-8f42-4bbc-b50a-44f3203f47f1','Browse posts','post','browse',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(9,'56db769d-2528-431b-a4d0-3c16ab691f9f','Read posts','post','read',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(10,'ddc0598f-d768-4a03-b61a-45fa23624a6f','Edit posts','post','edit',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(11,'ce80678c-64c3-4af3-ac98-ddc551f9d565','Add posts','post','add',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(12,'4b515f98-d70b-4bdb-9222-7a374f35ae45','Delete posts','post','destroy',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(13,'6ced6554-12a7-45d9-b088-74f25c38b782','Browse settings','setting','browse',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(14,'9f2b0929-32f1-4b75-a970-22364ed3a552','Read settings','setting','read',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(15,'b0ba4777-9b31-4fb7-831c-a00238d41b97','Edit settings','setting','edit',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(16,'f16d82fb-a524-4b40-87ee-b61644ee39b4','Generate slugs','slug','generate',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(17,'83acfd13-4314-4088-80b9-f5bb0d45fdec','Browse tags','tag','browse',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(18,'62d12fc9-c6d5-4204-88a7-c757236a9624','Read tags','tag','read',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(19,'2ead3323-a877-4e51-ba66-9cefe07ccdc6','Edit tags','tag','edit',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(20,'4487fc4c-08d7-43a2-9833-86f9c6fe5eaf','Add tags','tag','add',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(21,'b590bf90-7748-4076-a4ce-377d2a941241','Delete tags','tag','destroy',NULL,'2016-11-15 21:00:00',1,'2016-11-15 21:00:00',1),(22,'39daae0f-6a0a-4b77-afda-e27d21ff7ea2','Browse themes','theme','browse',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(23,'ab4da17c-26da-47f4-b0f9-4a4b7ee8182d','Edit themes','theme','edit',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(24,'89f9ad84-56ae-496a-995e-908324ac6e6f','Upload themes','theme','add',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(25,'ad6712b4-3be8-4067-b723-4b29728b1f54','Download themes','theme','read',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(26,'571bca36-dbf0-46d2-9c6e-10e5581b1670','Delete themes','theme','destroy',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(27,'f176f32a-d4de-4969-b8ae-c81c59c3856e','Browse users','user','browse',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(28,'45de23bb-b23d-425c-80c8-d9ab41d7e8b0','Read users','user','read',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(29,'16e26893-6fb3-4c9d-99bf-c7091675bbce','Edit users','user','edit',NULL,'2016-11-15 21:00:01',1,'2016-11-15 21:00:01',1),(30,'90b95936-8be1-45dd-90c6-b2f3f7f9c647','Add users','user','add',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(31,'1d104557-0c09-4fe1-a89c-5de96c0fbe98','Delete users','user','destroy',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(32,'53a9478f-d39f-43fb-982a-ba32adfcb86a','Assign a role','role','assign',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(33,'3a4fd04e-1ccb-4839-b3b6-e64eacdf3e14','Browse roles','role','browse',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(34,'d0269a96-cfbc-4fd7-9092-78b121e57497','Browse clients','client','browse',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(35,'a0a7fa44-1fc3-40ed-aaed-d4b4ab6d6aa9','Read clients','client','read',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(36,'9a9d9b63-2e45-4139-aeb6-ad406a1f32af','Edit clients','client','edit',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(37,'1df4b2b0-4b4c-4280-856f-95ae6ffa7872','Add clients','client','add',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(38,'70281337-104f-4a4a-9dbc-3fb53e2cce3d','Delete clients','client','destroy',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(39,'b5481bbb-1bd6-4c9d-8e8e-5c88179b3bf2','Browse subscribers','subscriber','browse',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(40,'b2053927-9e61-4870-9635-c19d6433e82d','Read subscribers','subscriber','read',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(41,'1c404d14-5ec6-4b77-837b-35935cdbee4f','Edit subscribers','subscriber','edit',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(42,'55abbfb8-3e9f-4b19-aca0-4d44c1133025','Add subscribers','subscriber','add',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1),(43,'b16a8e5f-cef2-441f-8f0d-727e5f7f04a6','Delete subscribers','subscriber','destroy',NULL,'2016-11-15 21:00:02',1,'2016-11-15 21:00:02',1);
+/*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions_apps`
+--
+
+DROP TABLE IF EXISTS `permissions_apps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions_apps` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `app_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions_apps`
+--
+
+LOCK TABLES `permissions_apps` WRITE;
+/*!40000 ALTER TABLE `permissions_apps` DISABLE KEYS */;
+/*!40000 ALTER TABLE `permissions_apps` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions_roles`
+--
+
+DROP TABLE IF EXISTS `permissions_roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions_roles` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `role_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions_roles`
+--
+
+LOCK TABLES `permissions_roles` WRITE;
+/*!40000 ALTER TABLE `permissions_roles` DISABLE KEYS */;
+INSERT INTO `permissions_roles` VALUES (1,1,1),(2,1,2),(3,1,3),(4,1,4),(5,1,5),(6,1,6),(7,1,7),(8,1,8),(9,1,9),(10,1,10),(11,1,11),(12,1,12),(13,1,13),(14,1,14),(15,1,15),(16,1,16),(17,1,17),(18,1,18),(19,1,19),(20,1,20),(21,1,21),(22,1,22),(23,1,23),(24,1,24),(25,1,25),(26,1,26),(27,1,27),(28,1,28),(29,1,29),(30,1,30),(31,1,31),(32,1,32),(33,1,33),(34,1,34),(35,1,35),(36,1,36),(37,1,37),(38,1,38),(39,1,39),(40,1,40),(41,1,41),(42,1,42),(43,1,43),(44,2,8),(45,2,9),(46,2,10),(47,2,11),(48,2,12),(49,2,13),(50,2,14),(51,2,16),(52,2,17),(53,2,18),(54,2,19),(55,2,20),(56,2,21),(57,2,27),(58,2,28),(59,2,29),(60,2,30),(61,2,31),(62,2,32),(63,2,33),(64,2,34),(65,2,35),(66,2,36),(67,2,37),(68,2,38),(69,2,42),(70,3,8),(71,3,9),(72,3,11),(73,3,13),(74,3,14),(75,3,16),(76,3,17),(77,3,18),(78,3,20),(79,3,27),(80,3,28),(81,3,33),(82,3,34),(83,3,35),(84,3,36),(85,3,37),(86,3,38),(87,3,42);
+/*!40000 ALTER TABLE `permissions_roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions_users`
+--
+
+DROP TABLE IF EXISTS `permissions_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions_users`
+--
+
+LOCK TABLES `permissions_users` WRITE;
+/*!40000 ALTER TABLE `permissions_users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `permissions_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `posts`
+--
+
+DROP TABLE IF EXISTS `posts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `posts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `title` varchar(150) NOT NULL,
+  `slug` varchar(150) NOT NULL,
+  `markdown` mediumtext,
+  `mobiledoc` longtext,
+  `html` mediumtext,
+  `image` text,
+  `featured` tinyint(1) NOT NULL DEFAULT '0',
+  `page` tinyint(1) NOT NULL DEFAULT '0',
+  `status` varchar(150) NOT NULL DEFAULT 'draft',
+  `language` varchar(6) NOT NULL DEFAULT 'en_US',
+  `visibility` varchar(150) NOT NULL DEFAULT 'public',
+  `meta_title` varchar(150) DEFAULT NULL,
+  `meta_description` varchar(200) DEFAULT NULL,
+  `author_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `published_at` datetime DEFAULT NULL,
+  `published_by` int(11) DEFAULT NULL,
+  `amp` mediumtext,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `posts_slug_unique` (`slug`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `posts`
+--
+
+LOCK TABLES `posts` WRITE;
+/*!40000 ALTER TABLE `posts` DISABLE KEYS */;
+INSERT INTO `posts` VALUES (1,'4aacd944-ead9-4f43-98a0-4f25ebb0ba45','Welcome to Ghost','welcome-to-ghost','You\'re live! Nice. We\'ve put together a little post to introduce you to the Ghost editor and get you started. You can manage your content by signing in to the admin area at `<your blog URL>/ghost/`. When you arrive, you can select this post from a list on the left and see a preview of it on the right. Click the little pencil icon at the top of the preview to edit this post and read the next section!\n\n## Getting Started\n\nGhost uses something called Markdown for writing. Essentially, it\'s a shorthand way to manage your post formatting as you write!\n\nWriting in Markdown is really easy. In the left hand panel of Ghost, you simply write as you normally would. Where appropriate, you can use *shortcuts* to **style** your content. For example, a list:\n\n* Item number one\n* Item number two\n    * A nested item\n* A final item\n\nor with numbers!\n\n1. Remember to buy some milk\n2. Drink the milk\n3. Tweet that I remembered to buy the milk, and drank it\n\n### Links\n\nWant to link to a source? No problem. If you paste in a URL, like http://ghost.org - it\'ll automatically be linked up. But if you want to customise your anchor text, you can do that too! Here\'s a link to [the Ghost website](http://ghost.org). Neat.\n\n### What about Images?\n\nImages work too! Already know the URL of the image you want to include in your article? Simply paste it in like this to make it show up:\n\n![The Ghost Logo](https://ghost.org/images/ghost.png)\n\nNot sure which image you want to use yet? That\'s ok too. Leave yourself a descriptive placeholder and keep writing. Come back later and drag and drop the image in to upload:\n\n![A bowl of bananas]\n\n\n### Quoting\n\nSometimes a link isn\'t enough, you want to quote someone on what they\'ve said. Perhaps you\'ve started using a new blogging platform and feel the sudden urge to share their slogan? A quote might be just the way to do it!\n\n> Ghost - Just a blogging platform\n\n### Working with Code\n\nGot a streak of geek? We\'ve got you covered there, too. You can write inline `<code>` blocks really easily with back ticks. Want to show off something more comprehensive? 4 spaces of indentation gets you there.\n\n    .awesome-thing {\n        display: block;\n        width: 100%;\n    }\n\n### Ready for a Break? \n\nThrow 3 or more dashes down on any new line and you\'ve got yourself a fancy new divider. Aw yeah.\n\n---\n\n### Advanced Usage\n\nThere\'s one fantastic secret about Markdown. If you want, you can write plain old HTML and it\'ll still work! Very flexible.\n\n<input type=\"text\" placeholder=\"I\'m an input field!\" />\n\nThat should be enough to get you started. Have fun - and let us know what you think :)',NULL,'<p>You\'re live! Nice. We\'ve put together a little post to introduce you to the Ghost editor and get you started. You can manage your content by signing in to the admin area at <code>&lt;your blog URL&gt;/ghost/</code>. When you arrive, you can select this post from a list on the left and see a preview of it on the right. Click the little pencil icon at the top of the preview to edit this post and read the next section!</p>\n\n<h2 id=\"gettingstarted\">Getting Started</h2>\n\n<p>Ghost uses something called Markdown for writing. Essentially, it\'s a shorthand way to manage your post formatting as you write!</p>\n\n<p>Writing in Markdown is really easy. In the left hand panel of Ghost, you simply write as you normally would. Where appropriate, you can use <em>shortcuts</em> to <strong>style</strong> your content. For example, a list:</p>\n\n<ul>\n<li>Item number one</li>\n<li>Item number two\n<ul><li>A nested item</li></ul></li>\n<li>A final item</li>\n</ul>\n\n<p>or with numbers!</p>\n\n<ol>\n<li>Remember to buy some milk  </li>\n<li>Drink the milk  </li>\n<li>Tweet that I remembered to buy the milk, and drank it</li>\n</ol>\n\n<h3 id=\"links\">Links</h3>\n\n<p>Want to link to a source? No problem. If you paste in a URL, like <a href=\"http://ghost.org\">http://ghost.org</a> - it\'ll automatically be linked up. But if you want to customise your anchor text, you can do that too! Here\'s a link to <a href=\"http://ghost.org\">the Ghost website</a>. Neat.</p>\n\n<h3 id=\"whataboutimages\">What about Images?</h3>\n\n<p>Images work too! Already know the URL of the image you want to include in your article? Simply paste it in like this to make it show up:</p>\n\n<p><img src=\"https://ghost.org/images/ghost.png\" alt=\"The Ghost Logo\" /></p>\n\n<p>Not sure which image you want to use yet? That\'s ok too. Leave yourself a descriptive placeholder and keep writing. Come back later and drag and drop the image in to upload:</p>\n\n<h3 id=\"quoting\">Quoting</h3>\n\n<p>Sometimes a link isn\'t enough, you want to quote someone on what they\'ve said. Perhaps you\'ve started using a new blogging platform and feel the sudden urge to share their slogan? A quote might be just the way to do it!</p>\n\n<blockquote>\n  <p>Ghost - Just a blogging platform</p>\n</blockquote>\n\n<h3 id=\"workingwithcode\">Working with Code</h3>\n\n<p>Got a streak of geek? We\'ve got you covered there, too. You can write inline <code>&lt;code&gt;</code> blocks really easily with back ticks. Want to show off something more comprehensive? 4 spaces of indentation gets you there.</p>\n\n<pre><code>.awesome-thing {\n    display: block;\n    width: 100%;\n}\n</code></pre>\n\n<h3 id=\"readyforabreak\">Ready for a Break?</h3>\n\n<p>Throw 3 or more dashes down on any new line and you\'ve got yourself a fancy new divider. Aw yeah.</p>\n\n<hr />\n\n<h3 id=\"advancedusage\">Advanced Usage</h3>\n\n<p>There\'s one fantastic secret about Markdown. If you want, you can write plain old HTML and it\'ll still work! Very flexible.</p>\n\n<p><input type=\"text\" placeholder=\"I\'m an input field!\" /></p>\n\n<p>That should be enough to get you started. Have fun - and let us know what you think :)</p>',NULL,0,0,'published','en_US','public',NULL,NULL,1,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1,NULL),(2,'f8011d60-2307-4723-82ba-f67143e73e53','new world record with Apache Spark','new-world-record-with-apache-spark','We are excited to share with you that a joint effort by Nanjing University, Alibaba Group, and Databricks set a new world record in CloudSort, a well-established third-party benchmark. We together architected the most efficient way to sort 100 TB of data, using only $144.22 USD worth of cloud resources, 3X more cost-efficient than the previous world record. Through this benchmark, Databricks, along with our partners, demonstrated that the most efficient way to process data is to use Apache Spark in the cloud.\n\nDatabricks, in collaboration with the Alibaba Group and Nanjing University, set a new CloudSort benchmark of $1.44 per terabyte.\n\nThis adds to the 2014 GraySort record we won, and validates two major technological trends we believe in:\n\n    Open source software is the future of software evolution, and Spark continues to be the most efficient engine for data processing.\n    Cloud computing is becoming the most cost-efficient and enabling architecture to deploy big data applications.\n\nIn the remainder of the blog post, we will explain the significance of the two benchmarks (CloudSort and GraySort), our records, and how they inspired major improvements in Spark such as Project Tungsten.\n\n\nGraySort Benchmark\n\nIt is easy to take for granted the incredible amount of computing power available today. As a beacon, the Sort Benchmark is a constant reminder of the journey taken and work accomplished by pioneers in computer systems of how we got here.\n\nStarted in 1985 by Turing Award winner Jim Gray, the benchmark measures the advances in computer software and hardware systems, and it is one of the most challenging benchmarks for computer systems. Participants in the past typically built specialized software and even hardware (e.g. special network topology) to maximize their chances of winning.\n\nThe original benchmark, called Datamation Sort, in 1985 required competing systems to sort 100 MB of data as fast as possible, regardless of the hardware resources used. 100 MB fits easily in the smallest USB stick you can find today, but back in 1985, it was a big challenge. The 1985 winning entry took 980 seconds. By 2001, this number was reduced to 0.44 seconds! To make the benchmark challenging, Datamation Sort was deprecated and a new TeraSort benchmark was created in 1998, changing the data size to 1TB.\n\nIn 2009, the 100 TB GraySort benchmark was created in honor of Jim Gray. Yahoo won the 2013 record using a 2100-node Hadoop cluster, sorting 100 TB of data in 72 minutes.\n\nIn 2014, our team at Databricks entered the competition using a distributed program built on top of Spark. Our system sorted 100 TB of data in 23 minutes, using only 207 machines on EC2. That is to say, Spark sorted the same data 3X faster using 10X fewer resources than the 2013 Hadoop entry. In addition to winning the benchmark, we also sorted 1 PB of data in 4 hours using a similar setup and achieved near linear scalability.\n\nThis 2014 win set a milestone: it was the first time a combination of open source software and cloud computing won the benchmark. In the past, only well-funded organizations could compete in the sort benchmark, because participants would need to acquire a sizable, costly cluster. But with the rise of the public cloud, anybody can leverage the elasticity and accomplish what was once only possible in a handful of companies.\nCloudSort Benchmark\n\nThe GraySort Benchmark measures the time it takes to sort 100 TB of data regardless of the hardware resources used. A well designed sorting system is relatively linearly scalable. Once an organization creates a linearly scalable system, the chance of winning then depends to a large degree on the amount of money the organization is willing to spend in acquiring hardware resources.\n\nTo mitigate this, the benchmark committee in 2014 created a new category called CloudSort. Unlike the GraySort which picks the winner based purely on time, CloudSort favors the entry with the lowest cost, measured by public cloud pricing. This benchmark effectively measures the efficiency, i.e. ratio of performance to cost, of the cloud architecture (combination of software stack, hardware stack, and tuning).\n\nThe spirit of the CloudSort is that it should be accessible enough that everyone can â€œplayâ€ at all scales, and let the best system win. In its inception year, the research team from the University of California, San Diego built a specialized sorting program called TritonSort and sorted 100 TB of data on Amazon EC2 for only $451. The system was so efficient that no one was able to challenge it even a year later.\n\nThat finally changed this week when our joint effort beat it and set the new CloudSort record.\nA New Cloud Record\n\nDatabricks, together with Nanjing University and Alibaba, formed a team called NADSort to compete this year. NADSort ran on 394 ecs.n1.large nodes on the AliCloud, each equipped with an Intel Haswell E5-2680 v3 processor, 8 GB of memory, and 4Ã—135 GB SSD Cloud Disk. The sorting program was based on Databricksâ€™ 2014 GraySort record-setting entry and adapted for better efficiency. You can find the details of NADSort in this technical report.\n\nIn the previous record for CloudSort, it cost nearly five dollars ($4.51) per terabyte, to sort 100 terabytes of data. Our optimizations and the cloud have reduced the per terabyte cost by two-thirds, and our new record stands at $1.44 per terabyte!\n\nWhat made this cost efficiency improvement possible?\n\n    Cost-effectiveness of cloud computing: Increased competition among major cloud providers has lowered the cost of resources, making deploying applications in the cloud economically feasible and scalable. In addition, cloud computing also enables use cases that were simply not possible before with on-demand resources and elasticity.\n    Efficiency of software: We have invested heavily in performance optimizations, with some of the most significant changes in the last two years. Innovations such as Project Tungsten, Catalyst, and whole-stage code generation, have benefited Apache Spark enormously, improving all aspects of the stack. In addition to the general improvements in Spark, our collaborators have also worked on improving shuffle specifically for the AliCloud environment.\n    Expertise in optimizing Spark and cloud-native architecture: As the creators of Spark, we continue to lead the way in execution optimization. In addition, we have developed deep expertise in operating and tuning cloud-native data architecture by operating tens of thousands of clusters at once for our customers and users. The expertise we developed in building the most efficient cloud architecture for data processing enabled us to push the boundary of cost-efficiency in addition to the innovations from providers.\n\nSignificance of Sorting in Distributed Data Processing\n\nYou might ask: whatâ€™s the significance of sorting, and why would we sort so much data?\n\nAt the core of sorting is the shuffle operation, which moves data across all machines. Shuffle underpins almost all distributed data processing workloads. For example, a SQL query joining two disparate data sources uses shuffle to move tuples that should be joined together onto the same machine, and collaborative filtering algorithms such as ALS rely on shuffle to send user/product ratings and weights across the network.\n\nMost data pipelines start with a large amount of raw data, but as the pipeline progresses, the amount of data is reduced due to filtering out irrelevant data or more compact representation of intermediate data. A SQL query on 100 TB of raw input data most likely only shuffles a tiny fraction of the 100 TB across the network, and the query optimizer can be smart to reduce the amount of data scanned. This pattern is also reflected in the naming of MapReduce itself.\n\nWe evaluate Spark using a lot of different benchmarks, e.g. TPC-H, TPC-DS. The sort benchmark, however, is by far the most challenging due to the way it stresses the execution path. Sorting 100 TB of input data requires shuffling 100 TB of data across the network. We canâ€™t hide behind clever tricks such as data skipping or query optimizations to reduce the scale.\n\nThe above attributes make sorting a metric we frequently refer to when we seek to measure and improve Spark.\n\nThe optimizations we did for our 2014 GraySort record have led to important improvements to Spark itself in the last 2 years: Netty-based network module to improve network throughput, off-heap memory management to remove GC, Project Tungsten to improve CPU efficiency. We have learned more with our 2016 CloudSort record, and we will apply those learnings to our development on Spark and the Databricks platform.\n\nThe achievements of two world records in two years leave us humbled, yet they validate the technology trends weâ€™ve invested in heavily: Spark and cloud computing. These achievements are also testament to the engineering prowess we posses. To leverage this expertise and get the best performance out of Spark in the cloud, sign up for a Databricks account to build your data platform.',NULL,'<p>We are excited to share with you that a joint effort by Nanjing University, Alibaba Group, and Databricks set a new world record in CloudSort, a well-established third-party benchmark. We together architected the most efficient way to sort 100 TB of data, using only $144.22 USD worth of cloud resources, 3X more cost-efficient than the previous world record. Through this benchmark, Databricks, along with our partners, demonstrated that the most efficient way to process data is to use Apache Spark in the cloud.</p>\n\n<p>Databricks, in collaboration with the Alibaba Group and Nanjing University, set a new CloudSort benchmark of $1.44 per terabyte.</p>\n\n<p>This adds to the 2014 GraySort record we won, and validates two major technological trends we believe in:</p>\n\n<pre><code>Open source software is the future of software evolution, and Spark continues to be the most efficient engine for data processing.\nCloud computing is becoming the most cost-efficient and enabling architecture to deploy big data applications.\n</code></pre>\n\n<p>In the remainder of the blog post, we will explain the significance of the two benchmarks (CloudSort and GraySort), our records, and how they inspired major improvements in Spark such as Project Tungsten.</p>\n\n<p>GraySort Benchmark</p>\n\n<p>It is easy to take for granted the incredible amount of computing power available today. As a beacon, the Sort Benchmark is a constant reminder of the journey taken and work accomplished by pioneers in computer systems of how we got here.</p>\n\n<p>Started in 1985 by Turing Award winner Jim Gray, the benchmark measures the advances in computer software and hardware systems, and it is one of the most challenging benchmarks for computer systems. Participants in the past typically built specialized software and even hardware (e.g. special network topology) to maximize their chances of winning.</p>\n\n<p>The original benchmark, called Datamation Sort, in 1985 required competing systems to sort 100 MB of data as fast as possible, regardless of the hardware resources used. 100 MB fits easily in the smallest USB stick you can find today, but back in 1985, it was a big challenge. The 1985 winning entry took 980 seconds. By 2001, this number was reduced to 0.44 seconds! To make the benchmark challenging, Datamation Sort was deprecated and a new TeraSort benchmark was created in 1998, changing the data size to 1TB.</p>\n\n<p>In 2009, the 100 TB GraySort benchmark was created in honor of Jim Gray. Yahoo won the 2013 record using a 2100-node Hadoop cluster, sorting 100 TB of data in 72 minutes.</p>\n\n<p>In 2014, our team at Databricks entered the competition using a distributed program built on top of Spark. Our system sorted 100 TB of data in 23 minutes, using only 207 machines on EC2. That is to say, Spark sorted the same data 3X faster using 10X fewer resources than the 2013 Hadoop entry. In addition to winning the benchmark, we also sorted 1 PB of data in 4 hours using a similar setup and achieved near linear scalability.</p>\n\n<p>This 2014 win set a milestone: it was the first time a combination of open source software and cloud computing won the benchmark. In the past, only well-funded organizations could compete in the sort benchmark, because participants would need to acquire a sizable, costly cluster. But with the rise of the public cloud, anybody can leverage the elasticity and accomplish what was once only possible in a handful of companies. <br />\nCloudSort Benchmark</p>\n\n<p>The GraySort Benchmark measures the time it takes to sort 100 TB of data regardless of the hardware resources used. A well designed sorting system is relatively linearly scalable. Once an organization creates a linearly scalable system, the chance of winning then depends to a large degree on the amount of money the organization is willing to spend in acquiring hardware resources.</p>\n\n<p>To mitigate this, the benchmark committee in 2014 created a new category called CloudSort. Unlike the GraySort which picks the winner based purely on time, CloudSort favors the entry with the lowest cost, measured by public cloud pricing. This benchmark effectively measures the efficiency, i.e. ratio of performance to cost, of the cloud architecture (combination of software stack, hardware stack, and tuning).</p>\n\n<p>The spirit of the CloudSort is that it should be accessible enough that everyone can â€œplayâ€ at all scales, and let the best system win. In its inception year, the research team from the University of California, San Diego built a specialized sorting program called TritonSort and sorted 100 TB of data on Amazon EC2 for only $451. The system was so efficient that no one was able to challenge it even a year later.</p>\n\n<p>That finally changed this week when our joint effort beat it and set the new CloudSort record. <br />\nA New Cloud Record</p>\n\n<p>Databricks, together with Nanjing University and Alibaba, formed a team called NADSort to compete this year. NADSort ran on 394 ecs.n1.large nodes on the AliCloud, each equipped with an Intel Haswell E5-2680 v3 processor, 8 GB of memory, and 4Ã—135 GB SSD Cloud Disk. The sorting program was based on Databricksâ€™ 2014 GraySort record-setting entry and adapted for better efficiency. You can find the details of NADSort in this technical report.</p>\n\n<p>In the previous record for CloudSort, it cost nearly five dollars ($4.51) per terabyte, to sort 100 terabytes of data. Our optimizations and the cloud have reduced the per terabyte cost by two-thirds, and our new record stands at $1.44 per terabyte!</p>\n\n<p>What made this cost efficiency improvement possible?</p>\n\n<pre><code>Cost-effectiveness of cloud computing: Increased competition among major cloud providers has lowered the cost of resources, making deploying applications in the cloud economically feasible and scalable. In addition, cloud computing also enables use cases that were simply not possible before with on-demand resources and elasticity.\nEfficiency of software: We have invested heavily in performance optimizations, with some of the most significant changes in the last two years. Innovations such as Project Tungsten, Catalyst, and whole-stage code generation, have benefited Apache Spark enormously, improving all aspects of the stack. In addition to the general improvements in Spark, our collaborators have also worked on improving shuffle specifically for the AliCloud environment.\nExpertise in optimizing Spark and cloud-native architecture: As the creators of Spark, we continue to lead the way in execution optimization. In addition, we have developed deep expertise in operating and tuning cloud-native data architecture by operating tens of thousands of clusters at once for our customers and users. The expertise we developed in building the most efficient cloud architecture for data processing enabled us to push the boundary of cost-efficiency in addition to the innovations from providers.\n</code></pre>\n\n<p>Significance of Sorting in Distributed Data Processing</p>\n\n<p>You might ask: whatâ€™s the significance of sorting, and why would we sort so much data?</p>\n\n<p>At the core of sorting is the shuffle operation, which moves data across all machines. Shuffle underpins almost all distributed data processing workloads. For example, a SQL query joining two disparate data sources uses shuffle to move tuples that should be joined together onto the same machine, and collaborative filtering algorithms such as ALS rely on shuffle to send user/product ratings and weights across the network.</p>\n\n<p>Most data pipelines start with a large amount of raw data, but as the pipeline progresses, the amount of data is reduced due to filtering out irrelevant data or more compact representation of intermediate data. A SQL query on 100 TB of raw input data most likely only shuffles a tiny fraction of the 100 TB across the network, and the query optimizer can be smart to reduce the amount of data scanned. This pattern is also reflected in the naming of MapReduce itself.</p>\n\n<p>We evaluate Spark using a lot of different benchmarks, e.g. TPC-H, TPC-DS. The sort benchmark, however, is by far the most challenging due to the way it stresses the execution path. Sorting 100 TB of input data requires shuffling 100 TB of data across the network. We canâ€™t hide behind clever tricks such as data skipping or query optimizations to reduce the scale.</p>\n\n<p>The above attributes make sorting a metric we frequently refer to when we seek to measure and improve Spark.</p>\n\n<p>The optimizations we did for our 2014 GraySort record have led to important improvements to Spark itself in the last 2 years: Netty-based network module to improve network throughput, off-heap memory management to remove GC, Project Tungsten to improve CPU efficiency. We have learned more with our 2016 CloudSort record, and we will apply those learnings to our development on Spark and the Databricks platform.</p>\n\n<p>The achievements of two world records in two years leave us humbled, yet they validate the technology trends weâ€™ve invested in heavily: Spark and cloud computing. These achievements are also testament to the engineering prowess we posses. To leverage this expertise and get the best performance out of Spark in the cloud, sign up for a Databricks account to build your data platform.</p>',NULL,0,0,'published','en_US','public',NULL,NULL,1,'2016-11-15 21:03:39',1,'2016-11-15 21:06:01',1,'2016-11-15 21:06:01',1,NULL),(3,'3f94d8dc-8a19-4b1d-a926-a102babde098','How to take a picture of the Milky Way','how-to-take-a-picture-of-the-milky-way','In the past couple of years, lots of nature photographers have been taking and publishing pictures like this one. I\'m glad, not just because I like the Milky Way, but more importantly because I want people to appreciate the starry sky and the fact that excessive city lights keep you from seeing it.\n\nHow do you take a picture like this?\n\nYou probably need a DSLR or a pro-grade mirrorless camera; miniaturized cameras with tiny lenses and tiny sensors don\'t do as well. But try what you have.\n\nFirst, find the Milky Way. The bright part of it is not always in the sky. At north temperate latitudes, look to the south, before midnight, from August to October.\n\nTo get a good view, you\'ll need to go out in the country. I took this picture at the Deerlick Astronomy Village.\n\nThen put the camera on a fixed tripod. Focus on infinity, preferably by focusing on a bright star or very distant light; autofocusers can\'t see the stars. Some cameras have a mountain symbol that you can choose to lock the focus at infinity.\n\nExpose anywhere from 3 to 30 seconds with a wide-angle lens wide open (f/4 or wider) and a high ISO setting. The longer the exposure, the more the stars will lengthen into short lines rather than dots due to the rotation of the earth.\n\nThis one was 6 seconds at ISO 12,800 with a Nikon D5300 and a 1990s-vintage Sigma 24-mm lens at f/2.8, with long-exposure noise reduction. Brightness and contrast were adjusted in Photoshop, where further noise reduction was done.\n',NULL,'<p>In the past couple of years, lots of nature photographers have been taking and publishing pictures like this one. I\'m glad, not just because I like the Milky Way, but more importantly because I want people to appreciate the starry sky and the fact that excessive city lights keep you from seeing it.</p>\n\n<p>How do you take a picture like this?</p>\n\n<p>You probably need a DSLR or a pro-grade mirrorless camera; miniaturized cameras with tiny lenses and tiny sensors don\'t do as well. But try what you have.</p>\n\n<p>First, find the Milky Way. The bright part of it is not always in the sky. At north temperate latitudes, look to the south, before midnight, from August to October.</p>\n\n<p>To get a good view, you\'ll need to go out in the country. I took this picture at the Deerlick Astronomy Village.</p>\n\n<p>Then put the camera on a fixed tripod. Focus on infinity, preferably by focusing on a bright star or very distant light; autofocusers can\'t see the stars. Some cameras have a mountain symbol that you can choose to lock the focus at infinity.</p>\n\n<p>Expose anywhere from 3 to 30 seconds with a wide-angle lens wide open (f/4 or wider) and a high ISO setting. The longer the exposure, the more the stars will lengthen into short lines rather than dots due to the rotation of the earth.</p>\n\n<p>This one was 6 seconds at ISO 12,800 with a Nikon D5300 and a 1990s-vintage Sigma 24-mm lens at f/2.8, with long-exposure noise reduction. Brightness and contrast were adjusted in Photoshop, where further noise reduction was done.</p>',NULL,0,0,'published','en_US','public',NULL,NULL,1,'2016-11-15 21:19:06',1,'2016-11-15 21:21:38',1,'2016-11-15 21:21:38',1,NULL),(4,'0c1591af-f12f-41e2-b0b1-1fda32b1f2b6','What are the Optimal Spaced Repetition Time Intervals?','what-are-the-optimal-spaced-repetition-time-intervals','Of course, we donâ€™t just want a suitable distributionâ€¦ we want the best distribution. After all, if spacing out your studying helps, there must be some optimal amount of space, right?\n\nPiotr Wozniak â€“ no relation to the Woz who built Appleâ€™s first computers â€“ spent a ton of time researching this question.\n\nHe eventually integrated what he found into the first spaced repetition computer software, which he called SuperMemo. The algorithm that determines SuperMemoâ€™s intervals is quite complex, but hereâ€™s a simplified, nutshell-version of some of his first optimal intervals:\n\n    First repetition: 1 day\n    Second repetition: 7 days\n    Third repetition: 16 days\n    Fourth repetition: 35 days\n\nA study published in 2008 with over 1,300 subjects also attempted to answer this question, but this time with respect to a given test date. What they found is that the optimal gap between the first and second study sessions increases in relation to how far away the test is.\n\nBenedict Carey interpreted their data in How We Learn and came up with the following optimal intervals based on different test dates:\n\nStudy Gaps Related to Time-to-Test\n\nSo if youâ€™ve got a test coming up in a week, you should do your first session today, and then do the next session either tomorrow or the day after. Iâ€™d also recommend adding a 3rd session the day before the test.\n\nItâ€™s important to know that these gaps are approximate â€“ as with pretty much everything in brain/memory science, itâ€™s hard to make completely specific recommendations that will work for everyone. Still, these numbers are close, and you should take them into account when youâ€™re creating exam study schedules.',NULL,'<p>Of course, we donâ€™t just want a suitable distributionâ€¦ we want the best distribution. After all, if spacing out your studying helps, there must be some optimal amount of space, right?</p>\n\n<p>Piotr Wozniak â€“ no relation to the Woz who built Appleâ€™s first computers â€“ spent a ton of time researching this question.</p>\n\n<p>He eventually integrated what he found into the first spaced repetition computer software, which he called SuperMemo. The algorithm that determines SuperMemoâ€™s intervals is quite complex, but hereâ€™s a simplified, nutshell-version of some of his first optimal intervals:</p>\n\n<pre><code>First repetition: 1 day\nSecond repetition: 7 days\nThird repetition: 16 days\nFourth repetition: 35 days\n</code></pre>\n\n<p>A study published in 2008 with over 1,300 subjects also attempted to answer this question, but this time with respect to a given test date. What they found is that the optimal gap between the first and second study sessions increases in relation to how far away the test is.</p>\n\n<p>Benedict Carey interpreted their data in How We Learn and came up with the following optimal intervals based on different test dates:</p>\n\n<p>Study Gaps Related to Time-to-Test</p>\n\n<p>So if youâ€™ve got a test coming up in a week, you should do your first session today, and then do the next session either tomorrow or the day after. Iâ€™d also recommend adding a 3rd session the day before the test.</p>\n\n<p>Itâ€™s important to know that these gaps are approximate â€“ as with pretty much everything in brain/memory science, itâ€™s hard to make completely specific recommendations that will work for everyone. Still, these numbers are close, and you should take them into account when youâ€™re creating exam study schedules.</p>',NULL,0,0,'published','en_US','public',NULL,NULL,1,'2017-04-20 22:05:44',1,'2017-04-20 22:06:31',1,'2017-04-20 22:06:27',1,NULL);
+/*!40000 ALTER TABLE `posts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `posts_tags`
+--
+
+DROP TABLE IF EXISTS `posts_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `posts_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `post_id` int(10) unsigned NOT NULL,
+  `tag_id` int(10) unsigned NOT NULL,
+  `sort_order` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `posts_tags_post_id_foreign` (`post_id`),
+  KEY `posts_tags_tag_id_foreign` (`tag_id`),
+  CONSTRAINT `posts_tags_post_id_foreign` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
+  CONSTRAINT `posts_tags_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `posts_tags`
+--
+
+LOCK TABLES `posts_tags` WRITE;
+/*!40000 ALTER TABLE `posts_tags` DISABLE KEYS */;
+INSERT INTO `posts_tags` VALUES (1,1,1,0);
+/*!40000 ALTER TABLE `posts_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `refreshtokens`
+--
+
+DROP TABLE IF EXISTS `refreshtokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `refreshtokens` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `client_id` int(10) unsigned NOT NULL,
+  `expires` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `refreshtokens_token_unique` (`token`),
+  KEY `refreshtokens_user_id_foreign` (`user_id`),
+  KEY `refreshtokens_client_id_foreign` (`client_id`),
+  CONSTRAINT `refreshtokens_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
+  CONSTRAINT `refreshtokens_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `refreshtokens`
+--
+
+LOCK TABLES `refreshtokens` WRITE;
+/*!40000 ALTER TABLE `refreshtokens` DISABLE KEYS */;
+INSERT INTO `refreshtokens` VALUES (3,'Ef54s5EQmYyGpwgDBxnyYkgU9grh6TySb4GIYeIOraVjkhBYGhhdFClERfInDFh40epG7lXjx9HwpHLSHBTh8X2ZLuUpqdX0Q4d0hJJfAyZUKoYuAWSnoQrdMM8NRfFHxa8bk2myzm16sptrs8CpiVZMsz4wpFssfAntKmmT56jzvM0heNm2oObdP0Bo03glDk8SGdiFMQEqnu3WO1YgOJ3HEyDfuhGog774qiBbjSOYuKNnWYEzr2HbjAbzKDv',1,1,1508592559618);
+/*!40000 ALTER TABLE `refreshtokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `roles` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `description` varchar(200) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles`
+--
+
+LOCK TABLES `roles` WRITE;
+/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (1,'59f888bf-769b-43c1-b60b-0411997f5747','Administrator','Administrators','2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(2,'bf8a4b51-25f7-4ccf-8b4f-b011104c1742','Editor','Editors','2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(3,'1162e0c6-2b46-4c90-b83d-3bedd1a434aa','Author','Authors','2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1),(4,'2cedb3ea-6363-458a-9015-a3a48ff5456c','Owner','Blog Owner','2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1);
+/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `roles_users`
+--
+
+DROP TABLE IF EXISTS `roles_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `roles_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `role_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles_users`
+--
+
+LOCK TABLES `roles_users` WRITE;
+/*!40000 ALTER TABLE `roles_users` DISABLE KEYS */;
+INSERT INTO `roles_users` VALUES (1,4,1);
+/*!40000 ALTER TABLE `roles_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `settings`
+--
+
+DROP TABLE IF EXISTS `settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `settings` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `key` varchar(150) NOT NULL,
+  `value` text,
+  `type` varchar(150) NOT NULL DEFAULT 'core',
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `settings_key_unique` (`key`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `settings`
+--
+
+LOCK TABLES `settings` WRITE;
+/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+INSERT INTO `settings` VALUES (1,'38963e33-bcb5-4a34-a50f-367203a111c8','databaseVersion','009','core','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(2,'5809f9a8-3e0e-42b3-81e2-32f12358398a','dbHash','4802e782-eee9-4fe3-a387-b90e56ab6db5','core','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(3,'0dffe6c0-181a-4748-aebf-8fe4db45f056','nextUpdateCheck','1492910958','core','2016-11-15 21:00:08',1,'2017-04-22 01:29:18',1),(4,'8e37478b-16b1-4c7d-b166-bd852d9c0ee6','displayUpdateNotification',NULL,'core','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(5,'bd92b836-274b-4158-b59e-e5253043215d','seenNotifications','[]','core','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(6,'d744c10f-8a4e-4d43-8110-7f72eb064021','migrations','{}','core','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(7,'ae0c4f50-34df-4cd8-ab33-f6799c2cb450','title','How to take a picture of the Milky way','blog','2016-11-15 21:00:08',1,'2016-11-15 21:02:07',1),(8,'d3f453a7-acec-4c45-8df4-65ef0eddb49d','description','Thoughts, stories and ideas.','blog','2016-11-15 21:00:08',1,'2016-11-15 21:02:07',1),(9,'b9c0d147-99a1-4a31-ae6f-c95a1500efe9','logo','','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(10,'49f60cea-91b2-431e-a3ad-6aa747377f26','cover','','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(11,'0dcc3aa9-2d61-41ca-b309-3fb212f6453f','defaultLang','en_US','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(12,'85eda078-261a-47ef-aa6b-34b6181ab711','postsPerPage','5','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(13,'ba11f1a7-6ad8-4991-9e2b-17279136b8e2','activeTimezone','Etc/UTC','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(14,'e37e5071-8c05-44fc-819a-4c719aafc1f2','forceI18n','true','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(15,'3aef38d0-3d43-4bfe-8f19-94d7bffb5242','permalinks','/:slug/','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(16,'b8c745a6-251d-4763-8a43-aea9410d3c57','ghost_head','','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(17,'ef89ee67-000c-42d2-9f80-8ffc3c8bb73c','ghost_foot','','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(18,'ec9c52e4-f6f7-41bb-b223-a2fd1ac2ce5e','facebook','','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(19,'d5de13b5-4dd6-4840-8082-5886ab3eb0bb','twitter','','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(20,'af5f45ae-6d52-456f-af0f-e47ff526a53b','labs','{}','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(21,'f0ae8249-b732-4889-8326-f1748bacdc00','navigation','[{\"label\":\"Home\", \"url\":\"/\"}]','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(22,'7189f300-00d1-4af0-9f02-240a4616b385','slack','[{\"url\":\"\"}]','blog','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(23,'667f152a-024e-42e1-80a1-9edf3d5d8079','activeApps','[]','app','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(24,'1e7b0d0e-d398-4267-a490-890656bec99f','installedApps','[]','app','2016-11-15 21:00:08',1,'2017-04-24 23:18:25',1),(25,'5f8c9441-e499-4f66-9cb8-6deb00a172c9','isPrivate','false','private','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(26,'864faffa-adb9-48f0-8c50-aeb29c3ff081','password','','private','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(27,'34feec34-3aa9-4b93-a3ca-6f16d1de3ec8','activeTheme','casper','theme','2016-11-15 21:00:08',1,'2016-11-15 21:00:08',1),(29,'d95c50cd-57e4-4208-8d75-2185aac59c1e','amp','true','blog','2017-03-30 02:04:31',1,'2017-03-30 02:04:31',1);
+/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `subscribers`
+--
+
+DROP TABLE IF EXISTS `subscribers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `subscribers` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) DEFAULT NULL,
+  `email` varchar(254) NOT NULL,
+  `status` varchar(150) NOT NULL DEFAULT 'pending',
+  `post_id` int(10) unsigned DEFAULT NULL,
+  `subscribed_url` text,
+  `subscribed_referrer` text,
+  `unsubscribed_url` text,
+  `unsubscribed_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `subscribers_email_unique` (`email`),
+  KEY `subscribers_post_id_foreign` (`post_id`),
+  CONSTRAINT `subscribers_post_id_foreign` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `subscribers`
+--
+
+LOCK TABLES `subscribers` WRITE;
+/*!40000 ALTER TABLE `subscribers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `subscribers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tags`
+--
+
+DROP TABLE IF EXISTS `tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `slug` varchar(150) NOT NULL,
+  `description` varchar(200) DEFAULT NULL,
+  `image` text,
+  `parent_id` int(11) DEFAULT NULL,
+  `visibility` varchar(150) NOT NULL DEFAULT 'public',
+  `meta_title` varchar(150) DEFAULT NULL,
+  `meta_description` varchar(200) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tags_slug_unique` (`slug`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tags`
+--
+
+LOCK TABLES `tags` WRITE;
+/*!40000 ALTER TABLE `tags` DISABLE KEYS */;
+INSERT INTO `tags` VALUES (1,'a73180d0-2235-44a3-80e0-dc482af16492','Getting Started','getting-started',NULL,NULL,NULL,'public',NULL,NULL,'2016-11-15 20:59:59',1,'2016-11-15 20:59:59',1);
+/*!40000 ALTER TABLE `tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `slug` varchar(150) NOT NULL,
+  `password` varchar(60) NOT NULL,
+  `email` varchar(254) NOT NULL,
+  `image` text,
+  `cover` text,
+  `bio` varchar(200) DEFAULT NULL,
+  `website` text,
+  `location` text,
+  `facebook` text,
+  `twitter` text,
+  `accessibility` text,
+  `status` varchar(150) NOT NULL DEFAULT 'active',
+  `language` varchar(6) NOT NULL DEFAULT 'en_US',
+  `visibility` varchar(150) NOT NULL DEFAULT 'public',
+  `meta_title` varchar(150) DEFAULT NULL,
+  `meta_description` varchar(200) DEFAULT NULL,
+  `tour` text,
+  `last_login` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_slug_unique` (`slug`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'269a143d-c159-4326-b951-6aff08e6c354','sathvikl','sathvikl','$2a$10$ZCcsLGLpHEresdV7r0LCau593wp2p3HynD63aZayqfK2MnojUciO2','sathvik.laxminarayan@intel.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'active','en_US','public',NULL,NULL,NULL,'2017-04-22 01:29:19','2016-11-15 21:00:07',1,'2017-04-22 01:29:19',1);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-04-25 15:23:35
