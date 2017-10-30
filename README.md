@@ -2,18 +2,19 @@
 Node.js benchmark based upon Ghost.js
 
 This benchmark is created from https://ghost.org/features/  
-which is a platform for creating an online 
-blog or a publication.
+
+Ghost is a modern, open source publishing platform built on Node.js with an Ember.js admin client, a JSON API, and a theme API powered by Handlebars.js. Its default database is MySQL, connected via Bookshelf as an ORM layer.
 
 ### Version
-This version of the benchmark is based on ghost.js version v0.11.7
+This version of the benchmark is based on Ghost.js version v0.11.7
 
-Consequently, based on ghost.js works it is compatible with node.js LTS versions >=6.9 <7.* and >=4.5 <5.*
+Consequently, since it's based on this version of Ghost.js, it is compatible with node.js LTS versions >=6.9 <7.* and >=4.5 <5.*   
 More info is at [Supported Node.js versions](http://support.ghost.org/supported-node-versions/)
 
-### Start up of ghost.js benchamark
+### Start up of Ghost.js benchamark
 
-Currently start-up and initialization of the database is not automated. 
+Currently start-up and initialization of the database is yet to be automated.   
+The benchmark's [config.js](https://github.com/sathvikl/ghostjs-benchmark/blob/bb75aa9877ce8f425279d7ad434a18c8d391422e/ghostjs-repo/config.js#L24) defaults to using MySQL database.  
 
 1. create an account in the mysql database and copy the information to [config.js for Ghost](https://github.com/sathvikl/ghostjs-benchmark/blob/bb75aa9877ce8f425279d7ad434a18c8d391422e/ghostjs-repo/config.js#L28)
 
