@@ -8,7 +8,10 @@ Ghost is a modern, open source publishing platform built on Node.js with an Embe
 ### Version
 This version of the benchmark is based on Ghost.js version v0.11.7
 
-Consequently, since it's based on this version of Ghost.js, it is compatible with node.js LTS versions >=6.9 <7.* and >=4.5 <5.*   
+~~Consequently, since it's based on this version of Ghost.js, it is compatible with node.js LTS versions >=6.9 <7.* and >=4.5 <5.*~~  </br>
+
+This version is hacked to support all versions of node.     
+require-dir package used by gscan node module had to be upgraded since some of the deprecated features are not supported in node 8 anymore   
 More info is at [Supported Node.js versions](http://support.ghost.org/supported-node-versions/)
 
 ### Start up of Ghost.js benchamark
@@ -35,8 +38,8 @@ npm install
 ```  
 
 4. switch to a compatible version of Node.js and start the server  
-For a single instance `NODE_ENV=production node index.js`  
-For a cluster instance `NODE_ENV=production node cluster-index.js`  
+For a single instance `NODE_ENV=production GHOST_NODE_VERSION_CHECK=false node index.js`  
+For a cluster instance `NODE_ENV=production GHOST_NODE_VERSION_CHECK=false node cluster-index.js`  
   
 `Listening on http://localhost:8013` :tada:
 
