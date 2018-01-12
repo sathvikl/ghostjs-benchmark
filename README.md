@@ -6,13 +6,14 @@ This benchmark is created from https://ghost.org/features/
 Ghost is a modern, open source publishing platform built on Node.js with an Ember.js admin client, a JSON API, and a theme API powered by Handlebars.js. Its default database is MySQL, connected via Bookshelf as an ORM layer.
 
 ### Version
-This version of the benchmark is based on Ghost.js version v0.11.7
+This version of the benchmark is based on Ghost.js version v1.17
+Compatible with LTS releases of node >=6.9 <7.* and >=4.5 <5.* (Node v4 argon LTS) and >=8.9 (Node v8 carbon LTS)
 
 ~~Consequently, since it's based on this version of Ghost.js, it is compatible with node.js LTS versions >=6.9 <7.* and >=4.5 <5.*~~  </br>
 
-This version is hacked to support all versions of node.     
-require-dir package used by gscan node module had to be upgraded since some of the deprecated features are not supported in node 8 anymore   
-More info is at [Supported Node.js versions](http://support.ghost.org/supported-node-versions/)
+~~This version is hacked to support all versions of node.     
+require-dir package used by gscan node module had to be upgraded since some of the deprecated features are not supported in node 8 anymore~~   
+More info about Ghost.js is at [Supported Node.js versions](http://support.ghost.org/supported-node-versions/)
 
 ### Start up of Ghost.js benchamark
 
