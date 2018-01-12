@@ -1,0 +1,740 @@
+-- MySQL dump 10.13  Distrib 5.5.40, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: ghost
+-- ------------------------------------------------------
+-- Server version	5.5.40-0ubuntu1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `accesstokens`
+--
+
+DROP TABLE IF EXISTS `accesstokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `accesstokens` (
+  `id` varchar(24) NOT NULL,
+  `token` varchar(191) NOT NULL,
+  `user_id` varchar(24) NOT NULL,
+  `client_id` varchar(24) NOT NULL,
+  `issued_by` varchar(24) DEFAULT NULL,
+  `expires` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `accesstokens_token_unique` (`token`),
+  KEY `accesstokens_user_id_foreign` (`user_id`),
+  KEY `accesstokens_client_id_foreign` (`client_id`),
+  CONSTRAINT `accesstokens_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
+  CONSTRAINT `accesstokens_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `accesstokens`
+--
+
+LOCK TABLES `accesstokens` WRITE;
+/*!40000 ALTER TABLE `accesstokens` DISABLE KEYS */;
+INSERT INTO `accesstokens` VALUES ('5a04efb7f2ae72408fba6536','peF8D8dhLYHrPfDTNwRGoRtgfEbwZfaTudC8hQ9pbW2mtztxkROHtCPIMNQNmNdyY1S61qdPxHiqaMoffz3zcn6MSTKRS5g500NUKZUkPqeRD8aO0NOXrxIy7pkSTA2TaM9ybRCF44OqXfVp8Q2uivFu8yDV0i8BZF8xMqkJ6PYearRuxQOplzv7A6S2DWt','1','5a04ed2e663ac7403dd02038','5a04efb7f2ae72408fba6535',1512900951894);
+/*!40000 ALTER TABLE `accesstokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `app_fields`
+--
+
+DROP TABLE IF EXISTS `app_fields`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `app_fields` (
+  `id` varchar(24) NOT NULL,
+  `key` varchar(50) NOT NULL,
+  `value` text,
+  `type` varchar(50) NOT NULL DEFAULT 'html',
+  `app_id` varchar(24) NOT NULL,
+  `relatable_id` varchar(24) NOT NULL,
+  `relatable_type` varchar(50) NOT NULL DEFAULT 'posts',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `app_fields_app_id_foreign` (`app_id`),
+  CONSTRAINT `app_fields_app_id_foreign` FOREIGN KEY (`app_id`) REFERENCES `apps` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_fields`
+--
+
+LOCK TABLES `app_fields` WRITE;
+/*!40000 ALTER TABLE `app_fields` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_fields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `app_settings`
+--
+
+DROP TABLE IF EXISTS `app_settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `app_settings` (
+  `id` varchar(24) NOT NULL,
+  `key` varchar(50) NOT NULL,
+  `value` text,
+  `app_id` varchar(24) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `app_settings_key_unique` (`key`),
+  KEY `app_settings_app_id_foreign` (`app_id`),
+  CONSTRAINT `app_settings_app_id_foreign` FOREIGN KEY (`app_id`) REFERENCES `apps` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_settings`
+--
+
+LOCK TABLES `app_settings` WRITE;
+/*!40000 ALTER TABLE `app_settings` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `apps`
+--
+
+DROP TABLE IF EXISTS `apps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `apps` (
+  `id` varchar(24) NOT NULL,
+  `name` varchar(191) NOT NULL,
+  `slug` varchar(191) NOT NULL,
+  `version` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'inactive',
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `apps_name_unique` (`name`),
+  UNIQUE KEY `apps_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `apps`
+--
+
+LOCK TABLES `apps` WRITE;
+/*!40000 ALTER TABLE `apps` DISABLE KEYS */;
+/*!40000 ALTER TABLE `apps` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `brute`
+--
+
+DROP TABLE IF EXISTS `brute`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `brute` (
+  `key` varchar(191) NOT NULL,
+  `firstRequest` bigint(20) NOT NULL,
+  `lastRequest` bigint(20) NOT NULL,
+  `lifetime` bigint(20) NOT NULL,
+  `count` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `brute`
+--
+
+LOCK TABLES `brute` WRITE;
+/*!40000 ALTER TABLE `brute` DISABLE KEYS */;
+INSERT INTO `brute` VALUES ('cRPpHvdy8sfL5UFWTquKywpwNrBuEQ6gQngGed2hJr4=',1510272951607,1510272951607,1510276551609,1);
+/*!40000 ALTER TABLE `brute` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `client_trusted_domains`
+--
+
+DROP TABLE IF EXISTS `client_trusted_domains`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `client_trusted_domains` (
+  `id` varchar(24) NOT NULL,
+  `client_id` varchar(24) NOT NULL,
+  `trusted_domain` varchar(2000) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `client_trusted_domains_client_id_foreign` (`client_id`),
+  CONSTRAINT `client_trusted_domains_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `client_trusted_domains`
+--
+
+LOCK TABLES `client_trusted_domains` WRITE;
+/*!40000 ALTER TABLE `client_trusted_domains` DISABLE KEYS */;
+/*!40000 ALTER TABLE `client_trusted_domains` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `clients`
+--
+
+DROP TABLE IF EXISTS `clients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clients` (
+  `id` varchar(24) NOT NULL,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `slug` varchar(50) NOT NULL,
+  `secret` varchar(191) NOT NULL,
+  `redirection_uri` varchar(2000) DEFAULT NULL,
+  `client_uri` varchar(2000) DEFAULT NULL,
+  `auth_uri` varchar(2000) DEFAULT NULL,
+  `logo` varchar(2000) DEFAULT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'development',
+  `type` varchar(50) NOT NULL DEFAULT 'ua',
+  `description` varchar(2000) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `clients_name_unique` (`name`),
+  UNIQUE KEY `clients_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `clients`
+--
+
+LOCK TABLES `clients` WRITE;
+/*!40000 ALTER TABLE `clients` DISABLE KEYS */;
+INSERT INTO `clients` VALUES ('5a04ed2e663ac7403dd02038','dd248d2c-d6ae-437b-a404-95a66f9b30bf','Ghost Admin','ghost-admin','a87666edbd56',NULL,NULL,NULL,NULL,'enabled','ua',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd02039','6d8f8960-35a4-42a1-a270-264d6b38467c','Ghost Frontend','ghost-frontend','a36de8557c16',NULL,NULL,NULL,NULL,'enabled','ua',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd0203a','7cf09665-33ce-4b4d-8668-8da81682927f','Ghost Scheduler','ghost-scheduler','0b27347d7eaf',NULL,NULL,NULL,NULL,'enabled','web',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd0203b','237f9858-3739-4756-b969-2773e8b0fbc7','Ghost Backup','ghost-backup','ea49ad7f44f2',NULL,NULL,NULL,NULL,'enabled','web',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1');
+/*!40000 ALTER TABLE `clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `invites`
+--
+
+DROP TABLE IF EXISTS `invites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `invites` (
+  `id` varchar(24) NOT NULL,
+  `role_id` varchar(24) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'pending',
+  `token` varchar(191) NOT NULL,
+  `email` varchar(191) NOT NULL,
+  `expires` bigint(20) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `invites_token_unique` (`token`),
+  UNIQUE KEY `invites_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `invites`
+--
+
+LOCK TABLES `invites` WRITE;
+/*!40000 ALTER TABLE `invites` DISABLE KEYS */;
+/*!40000 ALTER TABLE `invites` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `migrations`
+--
+
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `version` varchar(255) DEFAULT NULL,
+  `currentVersion` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `migrations`
+--
+
+LOCK TABLES `migrations` WRITE;
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+INSERT INTO `migrations` VALUES (1,'1-create-tables.js','init','1.17'),(2,'2-create-fixtures.js','init','1.17'),(3,'1-post-excerpt.js','1.3','1.17'),(4,'1-codeinjection-post.js','1.4','1.17'),(5,'1-og-twitter-post.js','1.5','1.17'),(6,'1-add-backup-client.js','1.7','1.17'),(7,'1-add-permissions-redirect.js','1.9','1.17'),(8,'1-custom-template-post.js','1.13','1.17'),(9,'2-theme-permissions.js','1.13','1.17');
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions`
+--
+
+DROP TABLE IF EXISTS `permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions` (
+  `id` varchar(24) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `object_type` varchar(50) NOT NULL,
+  `action_type` varchar(50) NOT NULL,
+  `object_id` varchar(24) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `permissions_name_unique` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions`
+--
+
+LOCK TABLES `permissions` WRITE;
+/*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
+INSERT INTO `permissions` VALUES ('5a04ed2e663ac7403dd02040','Export database','db','exportContent',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd02041','Import database','db','importContent',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd02042','Delete all content','db','deleteAllContent',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd02043','Send mail','mail','send',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd02044','Browse notifications','notification','browse',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd02045','Add notifications','notification','add',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd02046','Delete notifications','notification','destroy',NULL,'2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2f663ac7403dd02047','Browse posts','post','browse',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02048','Read posts','post','read',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02049','Edit posts','post','edit',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd0204a','Add posts','post','add',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd0204b','Delete posts','post','destroy',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd0204c','Browse settings','setting','browse',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd0204d','Read settings','setting','read',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd0204e','Edit settings','setting','edit',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd0204f','Generate slugs','slug','generate',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02050','Browse tags','tag','browse',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02051','Read tags','tag','read',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02052','Edit tags','tag','edit',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02053','Add tags','tag','add',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02054','Delete tags','tag','destroy',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02055','Browse themes','theme','browse',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed2f663ac7403dd02056','Edit themes','theme','edit',NULL,'2017-11-10 00:05:03','1','2017-11-10 00:05:03','1'),('5a04ed30663ac7403dd02057','Activate themes','theme','activate',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02058','Upload themes','theme','add',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02059','Download themes','theme','read',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd0205a','Delete themes','theme','destroy',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd0205b','Browse users','user','browse',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd0205c','Read users','user','read',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd0205d','Edit users','user','edit',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd0205e','Add users','user','add',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd0205f','Delete users','user','destroy',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02060','Assign a role','role','assign',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02061','Browse roles','role','browse',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02062','Browse clients','client','browse',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02063','Read clients','client','read',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02064','Edit clients','client','edit',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02065','Add clients','client','add',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed30663ac7403dd02066','Delete clients','client','destroy',NULL,'2017-11-10 00:05:04','1','2017-11-10 00:05:04','1'),('5a04ed31663ac7403dd02067','Browse subscribers','subscriber','browse',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd02068','Read subscribers','subscriber','read',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd02069','Edit subscribers','subscriber','edit',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd0206a','Add subscribers','subscriber','add',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd0206b','Delete subscribers','subscriber','destroy',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd0206c','Browse invites','invite','browse',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd0206d','Read invites','invite','read',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd0206e','Edit invites','invite','edit',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd0206f','Add invites','invite','add',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd02070','Delete invites','invite','destroy',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd02071','Download redirects','redirect','download',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1'),('5a04ed31663ac7403dd02072','Upload redirects','redirect','upload',NULL,'2017-11-10 00:05:05','1','2017-11-10 00:05:05','1');
+/*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions_apps`
+--
+
+DROP TABLE IF EXISTS `permissions_apps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions_apps` (
+  `id` varchar(24) NOT NULL,
+  `app_id` varchar(24) NOT NULL,
+  `permission_id` varchar(24) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions_apps`
+--
+
+LOCK TABLES `permissions_apps` WRITE;
+/*!40000 ALTER TABLE `permissions_apps` DISABLE KEYS */;
+/*!40000 ALTER TABLE `permissions_apps` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions_roles`
+--
+
+DROP TABLE IF EXISTS `permissions_roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions_roles` (
+  `id` varchar(24) NOT NULL,
+  `role_id` varchar(24) NOT NULL,
+  `permission_id` varchar(24) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions_roles`
+--
+
+LOCK TABLES `permissions_roles` WRITE;
+/*!40000 ALTER TABLE `permissions_roles` DISABLE KEYS */;
+INSERT INTO `permissions_roles` VALUES ('5a04ed36663ac7403dd02074','5a04ed2e663ac7403dd0203c','5a04ed2e663ac7403dd02040'),('5a04ed36663ac7403dd02075','5a04ed2e663ac7403dd0203c','5a04ed2e663ac7403dd02041'),('5a04ed36663ac7403dd02076','5a04ed2e663ac7403dd0203c','5a04ed2e663ac7403dd02042'),('5a04ed36663ac7403dd02077','5a04ed2e663ac7403dd0203c','5a04ed2e663ac7403dd02043'),('5a04ed36663ac7403dd02078','5a04ed2e663ac7403dd0203c','5a04ed2e663ac7403dd02044'),('5a04ed36663ac7403dd02079','5a04ed2e663ac7403dd0203c','5a04ed2e663ac7403dd02045'),('5a04ed36663ac7403dd0207a','5a04ed2e663ac7403dd0203c','5a04ed2e663ac7403dd02046'),('5a04ed36663ac7403dd0207b','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02047'),('5a04ed36663ac7403dd0207c','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02048'),('5a04ed36663ac7403dd0207d','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02049'),('5a04ed36663ac7403dd0207e','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd0204a'),('5a04ed36663ac7403dd0207f','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd0204b'),('5a04ed36663ac7403dd02080','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd0204c'),('5a04ed36663ac7403dd02081','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd0204d'),('5a04ed36663ac7403dd02082','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd0204e'),('5a04ed37663ac7403dd02083','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd0204f'),('5a04ed37663ac7403dd02084','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02050'),('5a04ed37663ac7403dd02085','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02051'),('5a04ed37663ac7403dd02086','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02052'),('5a04ed37663ac7403dd02087','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02053'),('5a04ed37663ac7403dd02088','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02054'),('5a04ed37663ac7403dd02089','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02055'),('5a04ed37663ac7403dd0208a','5a04ed2e663ac7403dd0203c','5a04ed2f663ac7403dd02056'),('5a04ed37663ac7403dd0208b','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02057'),('5a04ed37663ac7403dd0208c','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02058'),('5a04ed37663ac7403dd0208d','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02059'),('5a04ed37663ac7403dd0208e','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd0205a'),('5a04ed37663ac7403dd0208f','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd0205b'),('5a04ed37663ac7403dd02090','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd0205c'),('5a04ed37663ac7403dd02091','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd0205d'),('5a04ed37663ac7403dd02092','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd0205e'),('5a04ed37663ac7403dd02093','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd0205f'),('5a04ed38663ac7403dd02094','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02060'),('5a04ed38663ac7403dd02095','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02061'),('5a04ed38663ac7403dd02096','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02062'),('5a04ed38663ac7403dd02097','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02063'),('5a04ed38663ac7403dd02098','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02064'),('5a04ed38663ac7403dd02099','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02065'),('5a04ed38663ac7403dd0209a','5a04ed2e663ac7403dd0203c','5a04ed30663ac7403dd02066'),('5a04ed38663ac7403dd0209b','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd02067'),('5a04ed38663ac7403dd0209c','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd02068'),('5a04ed38663ac7403dd0209d','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd02069'),('5a04ed38663ac7403dd0209e','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd0206a'),('5a04ed38663ac7403dd0209f','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd0206b'),('5a04ed38663ac7403dd020a0','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd0206c'),('5a04ed38663ac7403dd020a1','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd0206d'),('5a04ed38663ac7403dd020a2','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd0206e'),('5a04ed38663ac7403dd020a3','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd0206f'),('5a04ed38663ac7403dd020a4','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd02070'),('5a04ed39663ac7403dd020a5','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd02071'),('5a04ed39663ac7403dd020a6','5a04ed2e663ac7403dd0203c','5a04ed31663ac7403dd02072'),('5a04ed39663ac7403dd020a7','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02047'),('5a04ed39663ac7403dd020a8','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02048'),('5a04ed39663ac7403dd020a9','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02049'),('5a04ed39663ac7403dd020aa','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd0204a'),('5a04ed39663ac7403dd020ab','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd0204b'),('5a04ed39663ac7403dd020ac','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd0204c'),('5a04ed39663ac7403dd020ad','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd0204d'),('5a04ed39663ac7403dd020ae','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd0204f'),('5a04ed39663ac7403dd020af','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02050'),('5a04ed39663ac7403dd020b0','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02051'),('5a04ed39663ac7403dd020b1','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02052'),('5a04ed39663ac7403dd020b2','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02053'),('5a04ed39663ac7403dd020b3','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02054'),('5a04ed39663ac7403dd020b4','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd0205b'),('5a04ed39663ac7403dd020b5','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd0205c'),('5a04ed39663ac7403dd020b6','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd0205d'),('5a04ed39663ac7403dd020b7','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd0205e'),('5a04ed39663ac7403dd020b8','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd0205f'),('5a04ed3a663ac7403dd020b9','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd02060'),('5a04ed3a663ac7403dd020ba','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd02061'),('5a04ed3a663ac7403dd020bb','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd02062'),('5a04ed3a663ac7403dd020bc','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd02063'),('5a04ed3a663ac7403dd020bd','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd02064'),('5a04ed3a663ac7403dd020be','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd02065'),('5a04ed3a663ac7403dd020bf','5a04ed2e663ac7403dd0203d','5a04ed30663ac7403dd02066'),('5a04ed3a663ac7403dd020c0','5a04ed2e663ac7403dd0203d','5a04ed31663ac7403dd0206a'),('5a04ed3a663ac7403dd020c1','5a04ed2e663ac7403dd0203d','5a04ed31663ac7403dd0206c'),('5a04ed3a663ac7403dd020c2','5a04ed2e663ac7403dd0203d','5a04ed31663ac7403dd0206d'),('5a04ed3a663ac7403dd020c3','5a04ed2e663ac7403dd0203d','5a04ed31663ac7403dd0206e'),('5a04ed3a663ac7403dd020c4','5a04ed2e663ac7403dd0203d','5a04ed31663ac7403dd0206f'),('5a04ed3a663ac7403dd020c5','5a04ed2e663ac7403dd0203d','5a04ed31663ac7403dd02070'),('5a04ed3a663ac7403dd020c6','5a04ed2e663ac7403dd0203d','5a04ed2f663ac7403dd02055'),('5a04ed3b663ac7403dd020c7','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd02047'),('5a04ed3b663ac7403dd020c8','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd02048'),('5a04ed3b663ac7403dd020c9','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd0204a'),('5a04ed3b663ac7403dd020ca','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd0204c'),('5a04ed3b663ac7403dd020cb','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd0204d'),('5a04ed3b663ac7403dd020cc','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd0204f'),('5a04ed3b663ac7403dd020cd','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd02050'),('5a04ed3b663ac7403dd020ce','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd02051'),('5a04ed3b663ac7403dd020cf','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd02053'),('5a04ed3b663ac7403dd020d0','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd0205b'),('5a04ed3b663ac7403dd020d1','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd0205c'),('5a04ed3b663ac7403dd020d2','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd02061'),('5a04ed3b663ac7403dd020d3','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd02062'),('5a04ed3b663ac7403dd020d4','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd02063'),('5a04ed3b663ac7403dd020d5','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd02064'),('5a04ed3b663ac7403dd020d6','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd02065'),('5a04ed3b663ac7403dd020d7','5a04ed2e663ac7403dd0203e','5a04ed30663ac7403dd02066'),('5a04ed3c663ac7403dd020d8','5a04ed2e663ac7403dd0203e','5a04ed31663ac7403dd0206a'),('5a04ed3c663ac7403dd020d9','5a04ed2e663ac7403dd0203e','5a04ed2f663ac7403dd02055');
+/*!40000 ALTER TABLE `permissions_roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions_users`
+--
+
+DROP TABLE IF EXISTS `permissions_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permissions_users` (
+  `id` varchar(24) NOT NULL,
+  `user_id` varchar(24) NOT NULL,
+  `permission_id` varchar(24) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions_users`
+--
+
+LOCK TABLES `permissions_users` WRITE;
+/*!40000 ALTER TABLE `permissions_users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `permissions_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `posts`
+--
+
+DROP TABLE IF EXISTS `posts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `posts` (
+  `id` varchar(24) NOT NULL,
+  `uuid` varchar(36) NOT NULL,
+  `title` varchar(2000) NOT NULL,
+  `slug` varchar(191) NOT NULL,
+  `mobiledoc` longtext,
+  `html` longtext,
+  `amp` longtext,
+  `plaintext` longtext,
+  `feature_image` varchar(2000) DEFAULT NULL,
+  `featured` tinyint(1) NOT NULL DEFAULT '0',
+  `page` tinyint(1) NOT NULL DEFAULT '0',
+  `status` varchar(50) NOT NULL DEFAULT 'draft',
+  `locale` varchar(6) DEFAULT NULL,
+  `visibility` varchar(50) NOT NULL DEFAULT 'public',
+  `meta_title` varchar(2000) DEFAULT NULL,
+  `meta_description` varchar(2000) DEFAULT NULL,
+  `author_id` varchar(24) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  `published_at` datetime DEFAULT NULL,
+  `published_by` varchar(24) DEFAULT NULL,
+  `custom_excerpt` varchar(2000) DEFAULT NULL,
+  `codeinjection_head` text,
+  `codeinjection_foot` text,
+  `og_image` varchar(2000) DEFAULT NULL,
+  `og_title` varchar(300) DEFAULT NULL,
+  `og_description` varchar(500) DEFAULT NULL,
+  `twitter_image` varchar(2000) DEFAULT NULL,
+  `twitter_title` varchar(300) DEFAULT NULL,
+  `twitter_description` varchar(500) DEFAULT NULL,
+  `custom_template` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `posts_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `posts`
+--
+
+LOCK TABLES `posts` WRITE;
+/*!40000 ALTER TABLE `posts` DISABLE KEYS */;
+INSERT INTO `posts` VALUES ('5a04ed2d663ac7403dd02030','bb602867-9d95-4266-b57c-34244707bb0b','Setting up your own Ghost theme','themes','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"Creating a totally custom design for your publication\\n\\nGhost comes with a beautiful default theme called Casper, which is designed to be a clean, readable publication layout and can be easily adapted for most purposes. However, Ghost can also be completely themed to suit your needs. Rather than just giving you a few basic settings which act as a poor proxy for code, we just let you write code.\\n\\nThere are a huge range of both free and premium pre-built themes which you can get from the [Ghost Theme Marketplace](http://marketplace.ghost.org), or you can simply create your own from scratch.\\n\\n[![marketplace](https://casper.ghost.org/v1.0.0/images/marketplace.jpg)](http://marketplace.ghost.org)\\n\\n> Anyone can write a completely custom Ghost theme, with just some solid knowledge of HTML and CSS\\n\\nGhost themes are written with a templating language called handlebars, which has a bunch of dynamic helpers to insert your data into template files. Like `{{author.name}}`, for example, outputs the name of the current author.\\n\\nThe best way to learn how to write your own Ghost theme is to have a look at [the source code for Casper](https://github.com/TryGhost/Casper), which is heavily commented and should give you a sense of how everything fits together.\\n\\n- `default.hbs` is the main template file, all contexts will load inside this file unless specifically told to use a different template.\\n- `post.hbs` is the file used in the context of viewing a post.\\n- `index.hbs` is the file used in the context of viewing the home page.\\n- and so on\\n\\nWe\'ve got [full and extensive theme documentation](http://themes.ghost.org/docs/about) which outlines every template file, context and helper that you can use.\\n\\nIf you want to chat with other people making Ghost themes to get any advice or help, there\'s also a **#themes** channel in our [public Slack community](https://slack.ghost.org) which we always recommend joining!\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>Creating a totally custom design for your publication</p>\n<p>Ghost comes with a beautiful default theme called Casper, which is designed to be a clean, readable publication layout and can be easily adapted for most purposes. However, Ghost can also be completely themed to suit your needs. Rather than just giving you a few basic settings which act as a poor proxy for code, we just let you write code.</p>\n<p>There are a huge range of both free and premium pre-built themes which you can get from the <a href=\"http://marketplace.ghost.org\">Ghost Theme Marketplace</a>, or you can simply create your own from scratch.</p>\n<p><a href=\"http://marketplace.ghost.org\"><img src=\"https://casper.ghost.org/v1.0.0/images/marketplace.jpg\" alt=\"marketplace\"></a></p>\n<blockquote>\n<p>Anyone can write a completely custom Ghost theme, with just some solid knowledge of HTML and CSS</p>\n</blockquote>\n<p>Ghost themes are written with a templating language called handlebars, which has a bunch of dynamic helpers to insert your data into template files. Like <code>{{author.name}}</code>, for example, outputs the name of the current author.</p>\n<p>The best way to learn how to write your own Ghost theme is to have a look at <a href=\"https://github.com/TryGhost/Casper\">the source code for Casper</a>, which is heavily commented and should give you a sense of how everything fits together.</p>\n<ul>\n<li><code>default.hbs</code> is the main template file, all contexts will load inside this file unless specifically told to use a different template.</li>\n<li><code>post.hbs</code> is the file used in the context of viewing a post.</li>\n<li><code>index.hbs</code> is the file used in the context of viewing the home page.</li>\n<li>and so on</li>\n</ul>\n<p>We\'ve got <a href=\"http://themes.ghost.org/docs/about\">full and extensive theme documentation</a> which outlines every template file, context and helper that you can use.</p>\n<p>If you want to chat with other people making Ghost themes to get any advice or help, there\'s also a <strong>#themes</strong> channel in our <a href=\"https://slack.ghost.org\">public Slack community</a> which we always recommend joining!</p>\n</div>',NULL,'Creating a totally custom design for your publication\n\nGhost comes with a beautiful default theme called Casper, which is designed to\nbe a clean, readable publication layout and can be easily adapted for most\npurposes. However, Ghost can also be completely themed to suit your needs.\nRather than just giving you a few basic settings which act as a poor proxy for\ncode, we just let you write code.\n\nThere are a huge range of both free and premium pre-built themes which you can\nget from the Ghost Theme Marketplace [http://marketplace.ghost.org], or you can\nsimply create your own from scratch.\n\n  [http://marketplace.ghost.org]\n\nAnyone can write a completely custom Ghost theme, with just some solid knowledge\nof HTML and CSS\n\nGhost themes are written with a templating language called handlebars, which has\na bunch of dynamic helpers to insert your data into template files. Like \n{{author.name}}, for example, outputs the name of the current author.\n\nThe best way to learn how to write your own Ghost theme is to have a look at \nthe\nsource code for Casper [https://github.com/TryGhost/Casper], which is heavily\ncommented and should give you a sense of how everything fits together.\n\n * default.hbs  is the main template file, all contexts will load inside this\n   file unless specifically told to use a different template.\n * post.hbs  is the file used in the context of viewing a post.\n * index.hbs  is the file used in the context of viewing the home page.\n * and so on\n\nWe\'ve got full and extensive theme documentation\n[http://themes.ghost.org/docs/about]  which outlines every template file,\ncontext and helper that you can use.\n\nIf you want to chat with other people making Ghost themes to get any advice or\nhelp, there\'s also a #themes  channel in our public Slack community\n[https://slack.ghost.org]  which we always recommend joining!','https://casper.ghost.org/v1.0.0/images/design.jpg',0,0,'published',NULL,'public',NULL,NULL,'5951f5fca366002ebd5dbef7','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04ed2d663ac7403dd02031','34f32824-9417-451e-920a-f957e85a2202','Advanced Markdown tips','advanced-markdown','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"There are lots of powerful things you can do with the Ghost editor\\n\\nIf you\'ve gotten pretty comfortable with [all the basics](/the-editor/) of writing in Ghost, then you may enjoy some more advanced tips about the types of things you can do with Markdown!\\n\\nAs with the last post about the editor, you\'ll want to be actually editing this post as you read it so that you can see all the Markdown code we\'re using.\\n\\n\\n## Special formatting\\n\\nAs well as bold and italics, you can also use some other special formatting in Markdown when the need arises, for example:\\n\\n+ ~~strike through~~\\n+ ==highlight==\\n+ \\\\*escaped characters\\\\*\\n\\n\\n## Writing code blocks\\n\\nThere are two types of code elements which can be inserted in Markdown, the first is inline, and the other is block. Inline code is formatted by wrapping any word or words in back-ticks, `like this`. Larger snippets of code can be displayed across multiple lines using triple back ticks:\\n\\n```\\n.my-link {\\n    text-decoration: underline;\\n}\\n```\\n\\nIf you want to get really fancy, you can even add syntax highlighting using [Prism.js](http://prismjs.com/).\\n\\n\\n## Full bleed images\\n\\nOne neat trick which you can use in Markdown to distinguish between different types of images is to add a `#hash` value to the end of the source URL, and then target images containing the hash with special styling. For example:\\n\\n![walking](https://casper.ghost.org/v1.0.0/images/walking.jpg#full)\\n\\nwhich is styled with...\\n\\n```\\nimg[src$=\\\"#full\\\"] {\\n    max-width: 100vw;\\n}\\n```\\n\\nThis creates full-bleed images in the Casper theme, which stretch beyond their usual boundaries right up to the edge of the window. Every theme handles these types of things slightly differently, but it\'s a great trick to play with if you want to have a variety of image sizes and styles.\\n\\n\\n## Reference lists\\n\\n**The quick brown [fox][1], jumped over the lazy [dog][2].**\\n\\n[1]: https://en.wikipedia.org/wiki/Fox \\\"Wikipedia: Fox\\\"\\n[2]: https://en.wikipedia.org/wiki/Dog \\\"Wikipedia: Dog\\\"\\n\\nAnother way to insert links in markdown is using reference lists. You might want to use this style of linking to cite reference material in a Wikipedia-style. All of the links are listed at the end of the document, so you can maintain full separation between content and its source or reference.\\n\\n\\n## Creating footnotes\\n\\nThe quick brown fox[^1] jumped over the lazy dog[^2].\\n\\n[^1]: Foxes are red\\n[^2]: Dogs are usually not red\\n\\nFootnotes are a great way to add additional contextual details when appropriate. Ghost will automatically add footnote content to the very end of your post.\\n\\n\\n## Full HTML\\n\\nPerhaps the best part of Markdown is that you\'re never limited to just Markdown. You can write HTML directly in the Ghost editor and it will just work as HTML usually does. No limits! Here\'s a standard YouTube embed code as an example:\\n\\n<iframe width=\\\"560\\\" height=\\\"315\\\" src=\\\"https://www.youtube.com/embed/Cniqsc9QfDo?rel=0&amp;showinfo=0\\\" frameborder=\\\"0\\\" allowfullscreen></iframe>\\n\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>There are lots of powerful things you can do with the Ghost editor</p>\n<p>If you\'ve gotten pretty comfortable with <a href=\"/the-editor/\">all the basics</a> of writing in Ghost, then you may enjoy some more advanced tips about the types of things you can do with Markdown!</p>\n<p>As with the last post about the editor, you\'ll want to be actually editing this post as you read it so that you can see all the Markdown code we\'re using.</p>\n<h2 id=\"specialformatting\">Special formatting</h2>\n<p>As well as bold and italics, you can also use some other special formatting in Markdown when the need arises, for example:</p>\n<ul>\n<li><s>strike through</s></li>\n<li><mark>highlight</mark></li>\n<li>*escaped characters*</li>\n</ul>\n<h2 id=\"writingcodeblocks\">Writing code blocks</h2>\n<p>There are two types of code elements which can be inserted in Markdown, the first is inline, and the other is block. Inline code is formatted by wrapping any word or words in back-ticks, <code>like this</code>. Larger snippets of code can be displayed across multiple lines using triple back ticks:</p>\n<pre><code>.my-link {\n    text-decoration: underline;\n}\n</code></pre>\n<p>If you want to get really fancy, you can even add syntax highlighting using <a href=\"http://prismjs.com/\">Prism.js</a>.</p>\n<h2 id=\"fullbleedimages\">Full bleed images</h2>\n<p>One neat trick which you can use in Markdown to distinguish between different types of images is to add a <code>#hash</code> value to the end of the source URL, and then target images containing the hash with special styling. For example:</p>\n<p><img src=\"https://casper.ghost.org/v1.0.0/images/walking.jpg#full\" alt=\"walking\"></p>\n<p>which is styled with...</p>\n<pre><code>img[src$=&quot;#full&quot;] {\n    max-width: 100vw;\n}\n</code></pre>\n<p>This creates full-bleed images in the Casper theme, which stretch beyond their usual boundaries right up to the edge of the window. Every theme handles these types of things slightly differently, but it\'s a great trick to play with if you want to have a variety of image sizes and styles.</p>\n<h2 id=\"referencelists\">Reference lists</h2>\n<p><strong>The quick brown <a href=\"https://en.wikipedia.org/wiki/Fox\" title=\"Wikipedia: Fox\">fox</a>, jumped over the lazy <a href=\"https://en.wikipedia.org/wiki/Dog\" title=\"Wikipedia: Dog\">dog</a>.</strong></p>\n<p>Another way to insert links in markdown is using reference lists. You might want to use this style of linking to cite reference material in a Wikipedia-style. All of the links are listed at the end of the document, so you can maintain full separation between content and its source or reference.</p>\n<h2 id=\"creatingfootnotes\">Creating footnotes</h2>\n<p>The quick brown fox<sup class=\"footnote-ref\"><a href=\"#fn1\" id=\"fnref1\">[1]</a></sup> jumped over the lazy dog<sup class=\"footnote-ref\"><a href=\"#fn2\" id=\"fnref2\">[2]</a></sup>.</p>\n<p>Footnotes are a great way to add additional contextual details when appropriate. Ghost will automatically add footnote content to the very end of your post.</p>\n<h2 id=\"fullhtml\">Full HTML</h2>\n<p>Perhaps the best part of Markdown is that you\'re never limited to just Markdown. You can write HTML directly in the Ghost editor and it will just work as HTML usually does. No limits! Here\'s a standard YouTube embed code as an example:</p>\n<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/Cniqsc9QfDo?rel=0&amp;showinfo=0\" frameborder=\"0\" allowfullscreen></iframe>\n<hr class=\"footnotes-sep\">\n<section class=\"footnotes\">\n<ol class=\"footnotes-list\">\n<li id=\"fn1\" class=\"footnote-item\"><p>Foxes are red <a href=\"#fnref1\" class=\"footnote-backref\">↩︎</a></p>\n</li>\n<li id=\"fn2\" class=\"footnote-item\"><p>Dogs are usually not red <a href=\"#fnref2\" class=\"footnote-backref\">↩︎</a></p>\n</li>\n</ol>\n</section>\n</div>',NULL,'There are lots of powerful things you can do with the Ghost editor\n\nIf you\'ve gotten pretty comfortable with all the basics [/the-editor/]  of\nwriting in Ghost, then you may enjoy some more advanced tips about the types of\nthings you can do with Markdown!\n\nAs with the last post about the editor, you\'ll want to be actually editing this\npost as you read it so that you can see all the Markdown code we\'re using.\n\nSpecial formatting\nAs well as bold and italics, you can also use some other special formatting in\nMarkdown when the need arises, for example:\n\n * strike through\n * highlight\n * *escaped characters*\n\nWriting code blocks\nThere are two types of code elements which can be inserted in Markdown, the\nfirst is inline, and the other is block. Inline code is formatted by wrapping\nany word or words in back-ticks, like this. Larger snippets of code can be\ndisplayed across multiple lines using triple back ticks:\n\n.my-link {\n    text-decoration: underline;\n}\n\n\nIf you want to get really fancy, you can even add syntax highlighting using \nPrism.js [http://prismjs.com/].\n\nFull bleed images\nOne neat trick which you can use in Markdown to distinguish between different\ntypes of images is to add a #hash  value to the end of the source URL, and then\ntarget images containing the hash with special styling. For example:\n\n\n\nwhich is styled with...\n\nimg[src$=\"#full\"] {\n    max-width: 100vw;\n}\n\n\nThis creates full-bleed images in the Casper theme, which stretch beyond their\nusual boundaries right up to the edge of the window. Every theme handles these\ntypes of things slightly differently, but it\'s a great trick to play with if you\nwant to have a variety of image sizes and styles.\n\nReference lists\nThe quick brown fox [https://en.wikipedia.org/wiki/Fox], jumped over the lazy \ndog [https://en.wikipedia.org/wiki/Dog].\n\nAnother way to insert links in markdown is using reference lists. You might want\nto use this style of linking to cite reference material in a Wikipedia-style.\nAll of the links are listed at the end of the document, so you can maintain full\nseparation between content and its source or reference.\n\nCreating footnotes\nThe quick brown fox[1]  jumped over the lazy dog[2].\n\nFootnotes are a great way to add additional contextual details when appropriate.\nGhost will automatically add footnote content to the very end of your post.\n\nFull HTML\nPerhaps the best part of Markdown is that you\'re never limited to just Markdown.\nYou can write HTML directly in the Ghost editor and it will just work as HTML\nusually does. No limits! Here\'s a standard YouTube embed code as an example:\n\n\n--------------------------------------------------------------------------------\n\n 1. Foxes are red ↩︎\n    \n    \n 2. Dogs are usually not red ↩︎','https://casper.ghost.org/v1.0.0/images/advanced.jpg',0,0,'published',NULL,'public',NULL,NULL,'5951f5fca366002ebd5dbef7','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1','2017-11-10 00:05:02','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04ed2d663ac7403dd02032','80cd49e2-3596-4cf3-9235-4e60543bc1ba','Making your site private','private-sites','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"Sometimes you might want to put your site behind closed doors\\n\\nIf you\'ve got a publication that you don\'t want the world to see yet because it\'s not ready to launch, you can hide your Ghost site behind a simple shared pass-phrase.\\n\\nYou can toggle this preference on at the bottom of Ghost\'s General Settings\\n\\n![private](https://casper.ghost.org/v1.0.0/images/private.png)\\n\\nGhost will give you a short, randomly generated pass-phrase which you can share with anyone who needs access to the site while you\'re working on it. While this setting is enabled, all search engine optimisation features will be switched off to help keep the site off the radar.\\n\\nDo remember though, this is *not* secure authentication. You shouldn\'t rely on this feature for protecting important private data. It\'s just a simple, shared pass-phrase for very basic privacy.\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>Sometimes you might want to put your site behind closed doors</p>\n<p>If you\'ve got a publication that you don\'t want the world to see yet because it\'s not ready to launch, you can hide your Ghost site behind a simple shared pass-phrase.</p>\n<p>You can toggle this preference on at the bottom of Ghost\'s General Settings</p>\n<p><img src=\"https://casper.ghost.org/v1.0.0/images/private.png\" alt=\"private\"></p>\n<p>Ghost will give you a short, randomly generated pass-phrase which you can share with anyone who needs access to the site while you\'re working on it. While this setting is enabled, all search engine optimisation features will be switched off to help keep the site off the radar.</p>\n<p>Do remember though, this is <em>not</em> secure authentication. You shouldn\'t rely on this feature for protecting important private data. It\'s just a simple, shared pass-phrase for very basic privacy.</p>\n</div>',NULL,'Sometimes you might want to put your site behind closed doors\n\nIf you\'ve got a publication that you don\'t want the world to see yet because\nit\'s not ready to launch, you can hide your Ghost site behind a simple shared\npass-phrase.\n\nYou can toggle this preference on at the bottom of Ghost\'s General Settings\n\n\n\nGhost will give you a short, randomly generated pass-phrase which you can share\nwith anyone who needs access to the site while you\'re working on it. While this\nsetting is enabled, all search engine optimisation features will be switched off\nto help keep the site off the radar.\n\nDo remember though, this is not  secure authentication. You shouldn\'t rely on\nthis feature for protecting important private data. It\'s just a simple, shared\npass-phrase for very basic privacy.','https://casper.ghost.org/v1.0.0/images/locked.jpg',0,0,'published',NULL,'public',NULL,NULL,'5951f5fca366002ebd5dbef7','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1','2017-11-10 00:05:03','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04ed2d663ac7403dd02033','3cad6b66-b185-441e-a41f-c80921f8852f','Managing Ghost users','managing-users','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"Ghost has a number of different user roles for your team\\n\\n\\n### Authors\\n\\nThe base user level in Ghost is an author. Authors can write posts, edit their own posts, and publish their own posts. Authors are **trusted** users. If you don\'t trust users to be allowed to publish their own posts, you shouldn\'t invite them to Ghost admin.\\n\\n\\n### Editors\\n\\nEditors are the 2nd user level in Ghost. Editors can do everything that an Author can do, but they can also edit and publish the posts of others - as well as their own. Editors can also invite new authors to the site.\\n\\n\\n### Administrators\\n\\nThe top user level in Ghost is Administrator. Again, administrators can do everything that Authors and Editors can do, but they can also edit all site settings and data, not just content. Additionally, administrators have full access to invite, manage or remove any other user of the site.\\n\\n\\n### The Owner\\n\\nThere is only ever one owner of a Ghost site. The owner is a special user which has all the same permissions as an Administrator, but with two exceptions: The Owner can never be deleted. And in some circumstances the owner will have access to additional special settings if applicable — for example, billing details, if using Ghost(Pro).\\n\\n---\\n\\nIt\'s a good idea to ask all of your users to fill out their user profiles, including bio and social links. These will populate rich structured data for posts and generally create more opportunities for themes to fully populate their design. \"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>Ghost has a number of different user roles for your team</p>\n<h3 id=\"authors\">Authors</h3>\n<p>The base user level in Ghost is an author. Authors can write posts, edit their own posts, and publish their own posts. Authors are <strong>trusted</strong> users. If you don\'t trust users to be allowed to publish their own posts, you shouldn\'t invite them to Ghost admin.</p>\n<h3 id=\"editors\">Editors</h3>\n<p>Editors are the 2nd user level in Ghost. Editors can do everything that an Author can do, but they can also edit and publish the posts of others - as well as their own. Editors can also invite new authors to the site.</p>\n<h3 id=\"administrators\">Administrators</h3>\n<p>The top user level in Ghost is Administrator. Again, administrators can do everything that Authors and Editors can do, but they can also edit all site settings and data, not just content. Additionally, administrators have full access to invite, manage or remove any other user of the site.</p>\n<h3 id=\"theowner\">The Owner</h3>\n<p>There is only ever one owner of a Ghost site. The owner is a special user which has all the same permissions as an Administrator, but with two exceptions: The Owner can never be deleted. And in some circumstances the owner will have access to additional special settings if applicable — for example, billing details, if using Ghost(Pro).</p>\n<hr>\n<p>It\'s a good idea to ask all of your users to fill out their user profiles, including bio and social links. These will populate rich structured data for posts and generally create more opportunities for themes to fully populate their design.</p>\n</div>',NULL,'Ghost has a number of different user roles for your team\n\nAuthors\nThe base user level in Ghost is an author. Authors can write posts, edit their\nown posts, and publish their own posts. Authors are trusted  users. If you don\'t\ntrust users to be allowed to publish their own posts, you shouldn\'t invite them\nto Ghost admin.\n\nEditors\nEditors are the 2nd user level in Ghost. Editors can do everything that an\nAuthor can do, but they can also edit and publish the posts of others - as well\nas their own. Editors can also invite new authors to the site.\n\nAdministrators\nThe top user level in Ghost is Administrator. Again, administrators can do\neverything that Authors and Editors can do, but they can also edit all site\nsettings and data, not just content. Additionally, administrators have full\naccess to invite, manage or remove any other user of the site.\n\nThe Owner\nThere is only ever one owner of a Ghost site. The owner is a special user which\nhas all the same permissions as an Administrator, but with two exceptions: The\nOwner can never be deleted. And in some circumstances the owner will have access\nto additional special settings if applicable — for example, billing details, if\nusing Ghost(Pro).\n\n\n--------------------------------------------------------------------------------\n\nIt\'s a good idea to ask all of your users to fill out their user profiles,\nincluding bio and social links. These will populate rich structured data for\nposts and generally create more opportunities for themes to fully populate their\ndesign.','https://casper.ghost.org/v1.0.0/images/team.jpg',0,0,'published',NULL,'public',NULL,NULL,'5951f5fca366002ebd5dbef7','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1','2017-11-10 00:05:04','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04ed2d663ac7403dd02034','2d837c7d-5ffb-482a-a3b3-f057cac020a9','Organising your content with tags','using-tags','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"Ghost has a single, powerful organisational taxonomy, called tags.\\n\\nIt doesn\'t matter whether you want to call them categories, tags, boxes, or anything else. You can think of Ghost tags a lot like Gmail labels. By tagging posts with one or more keyword, you can organise articles into buckets of related content.\\n\\n\\n## Basic tagging\\n\\nWhen you write a post, you can assign tags to help differentiate between categories of content. For example, you might tag some posts with `News` and other posts with `Cycling`, which would create two distinct categories of content listed on `/tag/news/` and `/tag/cycling/`, respectively.\\n\\nIf you tag a post with both `News` *and* `Cycling` - then it appears in both sections.\\n\\nTag archives are like dedicated home-pages for each category of content that you have. They have their own pages, their own RSS feeds, and can support their own cover images and meta data.\\n\\n\\n## The primary tag\\n\\nInside the Ghost editor, you can drag and drop tags into a specific order. The first tag in the list is always given the most importance, and some themes will only display the primary tag (the first tag in the list) by default. So you can add the most important tag which you want to show up in your theme, but also add a bunch of related tags which are less important.\\n\\n==**News**, Cycling, Bart Stevens, Extreme Sports==\\n\\nIn this example, **News** is the primary tag which will be displayed by the theme, but the post will also still receive all the other tags, and show up in their respective archives.\\n\\n\\n## Private tags\\n\\nSometimes you may want to assign a post a specific tag, but you don\'t necessarily want that tag appearing in the theme or creating an archive page. In Ghost, hashtags are private and can be used for special styling.\\n\\nFor example, if you sometimes publish posts with video content - you might want your theme to adapt and get rid of the sidebar for these posts, to give more space for an embedded video to fill the screen. In this case, you could use private tags to tell your theme what to do.\\n\\n==**News**, Cycling, #video==\\n\\nHere, the theme would assign the post publicly displayed tags of `News`, and `Cycling` - but it would also keep a private record of the post being tagged with `#video`.\\n\\nIn your theme, you could then look for private tags conditionally and give them special formatting:\\n\\n```\\n{{#post}}\\n    {{#has tag=\\\"#video\\\"}}\\n        ...markup for a nice big video post layout...\\n    {{else}}\\n        ...regular markup for a post...\\n    {{/has}}\\n{{/post}}\\n```\\n\\nYou can find documentation for theme development techniques like this and many more over on Ghost\'s extensive [theme documentation](https://themes.ghost.org/).\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>Ghost has a single, powerful organisational taxonomy, called tags.</p>\n<p>It doesn\'t matter whether you want to call them categories, tags, boxes, or anything else. You can think of Ghost tags a lot like Gmail labels. By tagging posts with one or more keyword, you can organise articles into buckets of related content.</p>\n<h2 id=\"basictagging\">Basic tagging</h2>\n<p>When you write a post, you can assign tags to help differentiate between categories of content. For example, you might tag some posts with <code>News</code> and other posts with <code>Cycling</code>, which would create two distinct categories of content listed on <code>/tag/news/</code> and <code>/tag/cycling/</code>, respectively.</p>\n<p>If you tag a post with both <code>News</code> <em>and</em> <code>Cycling</code> - then it appears in both sections.</p>\n<p>Tag archives are like dedicated home-pages for each category of content that you have. They have their own pages, their own RSS feeds, and can support their own cover images and meta data.</p>\n<h2 id=\"theprimarytag\">The primary tag</h2>\n<p>Inside the Ghost editor, you can drag and drop tags into a specific order. The first tag in the list is always given the most importance, and some themes will only display the primary tag (the first tag in the list) by default. So you can add the most important tag which you want to show up in your theme, but also add a bunch of related tags which are less important.</p>\n<p><mark><strong>News</strong>, Cycling, Bart Stevens, Extreme Sports</mark></p>\n<p>In this example, <strong>News</strong> is the primary tag which will be displayed by the theme, but the post will also still receive all the other tags, and show up in their respective archives.</p>\n<h2 id=\"privatetags\">Private tags</h2>\n<p>Sometimes you may want to assign a post a specific tag, but you don\'t necessarily want that tag appearing in the theme or creating an archive page. In Ghost, hashtags are private and can be used for special styling.</p>\n<p>For example, if you sometimes publish posts with video content - you might want your theme to adapt and get rid of the sidebar for these posts, to give more space for an embedded video to fill the screen. In this case, you could use private tags to tell your theme what to do.</p>\n<p><mark><strong>News</strong>, Cycling, #video</mark></p>\n<p>Here, the theme would assign the post publicly displayed tags of <code>News</code>, and <code>Cycling</code> - but it would also keep a private record of the post being tagged with <code>#video</code>.</p>\n<p>In your theme, you could then look for private tags conditionally and give them special formatting:</p>\n<pre><code>{{#post}}\n    {{#has tag=&quot;#video&quot;}}\n        ...markup for a nice big video post layout...\n    {{else}}\n        ...regular markup for a post...\n    {{/has}}\n{{/post}}\n</code></pre>\n<p>You can find documentation for theme development techniques like this and many more over on Ghost\'s extensive <a href=\"https://themes.ghost.org/\">theme documentation</a>.</p>\n</div>',NULL,'Ghost has a single, powerful organisational taxonomy, called tags.\n\nIt doesn\'t matter whether you want to call them categories, tags, boxes, or\nanything else. You can think of Ghost tags a lot like Gmail labels. By tagging\nposts with one or more keyword, you can organise articles into buckets of\nrelated content.\n\nBasic tagging\nWhen you write a post, you can assign tags to help differentiate between\ncategories of content. For example, you might tag some posts with News  and\nother posts with Cycling, which would create two distinct categories of content\nlisted on /tag/news/  and /tag/cycling/, respectively.\n\nIf you tag a post with both News  and  Cycling  - then it appears in both\nsections.\n\nTag archives are like dedicated home-pages for each category of content that you\nhave. They have their own pages, their own RSS feeds, and can support their own\ncover images and meta data.\n\nThe primary tag\nInside the Ghost editor, you can drag and drop tags into a specific order. The\nfirst tag in the list is always given the most importance, and some themes will\nonly display the primary tag (the first tag in the list) by default. So you can\nadd the most important tag which you want to show up in your theme, but also add\na bunch of related tags which are less important.\n\nNews, Cycling, Bart Stevens, Extreme Sports\n\nIn this example, News  is the primary tag which will be displayed by the theme,\nbut the post will also still receive all the other tags, and show up in their\nrespective archives.\n\nPrivate tags\nSometimes you may want to assign a post a specific tag, but you don\'t\nnecessarily want that tag appearing in the theme or creating an archive page. In\nGhost, hashtags are private and can be used for special styling.\n\nFor example, if you sometimes publish posts with video content - you might want\nyour theme to adapt and get rid of the sidebar for these posts, to give more\nspace for an embedded video to fill the screen. In this case, you could use\nprivate tags to tell your theme what to do.\n\nNews, Cycling, #video\n\nHere, the theme would assign the post publicly displayed tags of News, and \nCycling  - but it would also keep a private record of the post being tagged with\n #video.\n\nIn your theme, you could then look for private tags conditionally and give them\nspecial formatting:\n\n{{#post}}\n    {{#has tag=\"#video\"}}\n        ...markup for a nice big video post layout...\n    {{else}}\n        ...regular markup for a post...\n    {{/has}}\n{{/post}}\n\n\nYou can find documentation for theme development techniques like this and many\nmore over on Ghost\'s extensive theme documentation [https://themes.ghost.org/].','https://casper.ghost.org/v1.0.0/images/tags.jpg',0,0,'published',NULL,'public',NULL,NULL,'5951f5fca366002ebd5dbef7','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1','2017-11-10 00:05:05','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04ed2d663ac7403dd02035','43dc9071-16db-4e7d-b9fe-528090e7d471','Using the Ghost editor','the-editor','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"Ghost uses a language called **Markdown** to format text.\\n\\nWhen you go to edit a post and see special characters and colours intertwined between the words, those are Markdown shortcuts which tell Ghost what to do with the words in your document. The biggest benefit of Markdown is that you can quickly apply formatting as you type, without needing to pause.\\n\\nAt the bottom of the editor, you\'ll find a toolbar with basic formatting options to help you get started as easily as possible. You\'ll also notice that there\'s a **?** icon, which contains more advanced shortcuts.\\n\\nFor now, though, let\'s run you through some of the basics. You\'ll want to make sure you\'re editing this post in order to see all the Markdown we\'ve used.\\n\\n\\n## Formatting text\\n\\nThe most common shortcuts are of course, **bold** text, _italic_ text, and [hyperlinks](https://example.com). These generally make up the bulk of any document. You can type the characters out, but you can also use keyboard shortcuts.\\n\\n* `CMD/Ctrl + B` for Bold\\n* `CMD/Ctrl + I` for Italic\\n* `CMD/Ctrl + K` for a Link\\n* `CMD/Ctrl + H` for a Heading (Press multiple times for h2/h3/h4/etc)\\n\\nWith just a couple of extra characters here and there, you\'re well on your way to creating a beautifully formatted story.\\n\\n\\n## Inserting images\\n\\nImages in Markdown look just the same as links, except they\'re prefixed with an exclamation mark, like this:\\n\\n`![Image description](/path/to/image.jpg)`\\n\\n![Computer](https://casper.ghost.org/v1.0.0/images/computer.jpg)\\n\\nMost Markdown editors don\'t make you type this out, though. In Ghost you can click on the image icon in the toolbar at the bottom of the editor, or you can just click and drag an image from your desktop directly into the editor. Both will upload the image for you and generate the appropriate Markdown.\\n\\n_**Important Note:** Ghost does not currently have automatic image resizing, so it\'s always a good idea to make sure your images aren\'t gigantic files **before** uploading them to Ghost._\\n\\n\\n## Making lists\\n\\nLists in HTML are a formatting nightmare, but in Markdown they become an absolute breeze with just a couple of characters and a bit of smart automation. For numbered lists, just write out the numbers. For bullet lists, just use `*` or `-` or `+`. Like this:\\n\\n1. Crack the eggs over a bowl\\n2. Whisk them together\\n3. Make an omelette\\n\\nor\\n\\n- Remember to buy milk\\n- Feed the cat\\n- Come up with idea for next story\\n\\n\\n## Adding quotes\\n\\nWhen you want to pull out a particularly good excerpt in the middle of a piece, you can use `>` at the beginning of a paragraph to turn it into a Blockquote. You might\'ve seen this formatting before in email clients.\\n\\n> A well placed quote guides a reader through a story, helping them to understand the most important points being made\\n\\nAll themes handles blockquotes slightly differently. Sometimes they\'ll look better kept shorter, while other times you can quote fairly hefty amounts of text and get away with it. Generally, the safest option is to use blockquotes sparingly.\\n\\n\\n## Dividing things up\\n\\nIf you\'re writing a piece in parts and you just feel like you need to divide a couple of sections distinctly from each other, a horizontal rule might be just what you need. Dropping `---` on a new line will create a sleek divider, anywhere you want it.\\n\\n---\\n\\nThis should get you going with the vast majority of what you need to do in the editor, but if you\'re still curious about more advanced tips then check out the [Advanced Markdown Guide](/advanced-markdown/) - or if you\'d rather learn about how Ghost taxononomies work, we\'ve got a overview of [how to use Ghost tags](/using-tags/).\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>Ghost uses a language called <strong>Markdown</strong> to format text.</p>\n<p>When you go to edit a post and see special characters and colours intertwined between the words, those are Markdown shortcuts which tell Ghost what to do with the words in your document. The biggest benefit of Markdown is that you can quickly apply formatting as you type, without needing to pause.</p>\n<p>At the bottom of the editor, you\'ll find a toolbar with basic formatting options to help you get started as easily as possible. You\'ll also notice that there\'s a <strong>?</strong> icon, which contains more advanced shortcuts.</p>\n<p>For now, though, let\'s run you through some of the basics. You\'ll want to make sure you\'re editing this post in order to see all the Markdown we\'ve used.</p>\n<h2 id=\"formattingtext\">Formatting text</h2>\n<p>The most common shortcuts are of course, <strong>bold</strong> text, <em>italic</em> text, and <a href=\"https://example.com\">hyperlinks</a>. These generally make up the bulk of any document. You can type the characters out, but you can also use keyboard shortcuts.</p>\n<ul>\n<li><code>CMD/Ctrl + B</code> for Bold</li>\n<li><code>CMD/Ctrl + I</code> for Italic</li>\n<li><code>CMD/Ctrl + K</code> for a Link</li>\n<li><code>CMD/Ctrl + H</code> for a Heading (Press multiple times for h2/h3/h4/etc)</li>\n</ul>\n<p>With just a couple of extra characters here and there, you\'re well on your way to creating a beautifully formatted story.</p>\n<h2 id=\"insertingimages\">Inserting images</h2>\n<p>Images in Markdown look just the same as links, except they\'re prefixed with an exclamation mark, like this:</p>\n<p><code>![Image description](/path/to/image.jpg)</code></p>\n<p><img src=\"https://casper.ghost.org/v1.0.0/images/computer.jpg\" alt=\"Computer\"></p>\n<p>Most Markdown editors don\'t make you type this out, though. In Ghost you can click on the image icon in the toolbar at the bottom of the editor, or you can just click and drag an image from your desktop directly into the editor. Both will upload the image for you and generate the appropriate Markdown.</p>\n<p><em><strong>Important Note:</strong> Ghost does not currently have automatic image resizing, so it\'s always a good idea to make sure your images aren\'t gigantic files <strong>before</strong> uploading them to Ghost.</em></p>\n<h2 id=\"makinglists\">Making lists</h2>\n<p>Lists in HTML are a formatting nightmare, but in Markdown they become an absolute breeze with just a couple of characters and a bit of smart automation. For numbered lists, just write out the numbers. For bullet lists, just use <code>*</code> or <code>-</code> or <code>+</code>. Like this:</p>\n<ol>\n<li>Crack the eggs over a bowl</li>\n<li>Whisk them together</li>\n<li>Make an omelette</li>\n</ol>\n<p>or</p>\n<ul>\n<li>Remember to buy milk</li>\n<li>Feed the cat</li>\n<li>Come up with idea for next story</li>\n</ul>\n<h2 id=\"addingquotes\">Adding quotes</h2>\n<p>When you want to pull out a particularly good excerpt in the middle of a piece, you can use <code>&gt;</code> at the beginning of a paragraph to turn it into a Blockquote. You might\'ve seen this formatting before in email clients.</p>\n<blockquote>\n<p>A well placed quote guides a reader through a story, helping them to understand the most important points being made</p>\n</blockquote>\n<p>All themes handles blockquotes slightly differently. Sometimes they\'ll look better kept shorter, while other times you can quote fairly hefty amounts of text and get away with it. Generally, the safest option is to use blockquotes sparingly.</p>\n<h2 id=\"dividingthingsup\">Dividing things up</h2>\n<p>If you\'re writing a piece in parts and you just feel like you need to divide a couple of sections distinctly from each other, a horizontal rule might be just what you need. Dropping <code>---</code> on a new line will create a sleek divider, anywhere you want it.</p>\n<hr>\n<p>This should get you going with the vast majority of what you need to do in the editor, but if you\'re still curious about more advanced tips then check out the <a href=\"/advanced-markdown/\">Advanced Markdown Guide</a> - or if you\'d rather learn about how Ghost taxononomies work, we\'ve got a overview of <a href=\"/using-tags/\">how to use Ghost tags</a>.</p>\n</div>',NULL,'Ghost uses a language called Markdown  to format text.\n\nWhen you go to edit a post and see special characters and colours intertwined\nbetween the words, those are Markdown shortcuts which tell Ghost what to do with\nthe words in your document. The biggest benefit of Markdown is that you can\nquickly apply formatting as you type, without needing to pause.\n\nAt the bottom of the editor, you\'ll find a toolbar with basic formatting options\nto help you get started as easily as possible. You\'ll also notice that there\'s a\n ?  icon, which contains more advanced shortcuts.\n\nFor now, though, let\'s run you through some of the basics. You\'ll want to make\nsure you\'re editing this post in order to see all the Markdown we\'ve used.\n\nFormatting text\nThe most common shortcuts are of course, bold  text, italic  text, and \nhyperlinks [https://example.com]. These generally make up the bulk of any\ndocument. You can type the characters out, but you can also use keyboard\nshortcuts.\n\n * CMD/Ctrl + B  for Bold\n * CMD/Ctrl + I  for Italic\n * CMD/Ctrl + K  for a Link\n * CMD/Ctrl + H  for a Heading (Press multiple times for h2/h3/h4/etc)\n\nWith just a couple of extra characters here and there, you\'re well on your way\nto creating a beautifully formatted story.\n\nInserting images\nImages in Markdown look just the same as links, except they\'re prefixed with an\nexclamation mark, like this:\n\n![Image description](/path/to/image.jpg)\n\n\n\nMost Markdown editors don\'t make you type this out, though. In Ghost you can\nclick on the image icon in the toolbar at the bottom of the editor, or you can\njust click and drag an image from your desktop directly into the editor. Both\nwill upload the image for you and generate the appropriate Markdown.\n\nImportant Note:  Ghost does not currently have automatic image resizing, so it\'s\nalways a good idea to make sure your images aren\'t gigantic files before \nuploading them to Ghost.\n\nMaking lists\nLists in HTML are a formatting nightmare, but in Markdown they become an\nabsolute breeze with just a couple of characters and a bit of smart automation.\nFor numbered lists, just write out the numbers. For bullet lists, just use *  or\n -  or +. Like this:\n\n 1. Crack the eggs over a bowl\n 2. Whisk them together\n 3. Make an omelette\n\nor\n\n * Remember to buy milk\n * Feed the cat\n * Come up with idea for next story\n\nAdding quotes\nWhen you want to pull out a particularly good excerpt in the middle of a piece,\nyou can use >  at the beginning of a paragraph to turn it into a Blockquote. You\nmight\'ve seen this formatting before in email clients.\n\nA well placed quote guides a reader through a story, helping them to understand\nthe most important points being made\n\nAll themes handles blockquotes slightly differently. Sometimes they\'ll look\nbetter kept shorter, while other times you can quote fairly hefty amounts of\ntext and get away with it. Generally, the safest option is to use blockquotes\nsparingly.\n\nDividing things up\nIf you\'re writing a piece in parts and you just feel like you need to divide a\ncouple of sections distinctly from each other, a horizontal rule might be just\nwhat you need. Dropping ---  on a new line will create a sleek divider, anywhere\nyou want it.\n\n\n--------------------------------------------------------------------------------\n\nThis should get you going with the vast majority of what you need to do in the\neditor, but if you\'re still curious about more advanced tips then check out the \nAdvanced Markdown Guide [/advanced-markdown/]  - or if you\'d rather learn about\nhow Ghost taxononomies work, we\'ve got a overview of how to use Ghost tags\n[/using-tags/].','https://casper.ghost.org/v1.0.0/images/writing.jpg',0,0,'published',NULL,'public',NULL,NULL,'5951f5fca366002ebd5dbef7','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1','2017-11-10 00:05:06','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04ed2d663ac7403dd02036','86e107d4-f533-4e1a-9a0d-4ae9fbdea046','Welcome to Ghost','welcome','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"Hey! Welcome to Ghost, it\'s great to have you :)\\n\\nWe know that first impressions are important, so we\'ve populated your new site with some initial **Getting Started** posts that will help you get familiar with everything in no time. This is the first one!\\n\\n\\n### There are a few things that you should know up-front:\\n\\n1. Ghost is designed for ambitious, professional publishers who want to actively build a business around their content. That\'s who it works best for. If you\'re using Ghost for some other purpose, that\'s fine too - but it might not be the best choice for you.\\n\\n2. The entire platform can be modified and customized to suit your needs, which is very powerful, but doing so **does** require some knowledge of code. Ghost is not necessarily a good platform for beginners or people who just want a simple personal blog.\\n\\n3. For the best experience we recommend downloading the [Ghost Desktop App](https://ghost.org/downloads/) for your computer, which is the best way to access your Ghost site on a desktop device.\\n\\nGhost is made by an independent non-profit organisation called the Ghost Foundation. We are 100% self funded by revenue from our [Ghost(Pro)](https://ghost.org/pricing) service, and every penny we make is re-invested into funding further development of free, open source technology for modern journalism.\\n\\nThe main thing you\'ll want to read about next is probably: [the Ghost editor](/the-editor/).\\n\\nOnce you\'re done reading, you can simply delete the default **Ghost** user from your team to remove all of these introductory posts!\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>Hey! Welcome to Ghost, it\'s great to have you :)</p>\n<p>We know that first impressions are important, so we\'ve populated your new site with some initial <strong>Getting Started</strong> posts that will help you get familiar with everything in no time. This is the first one!</p>\n<h3 id=\"thereareafewthingsthatyoushouldknowupfront\">There are a few things that you should know up-front:</h3>\n<ol>\n<li>\n<p>Ghost is designed for ambitious, professional publishers who want to actively build a business around their content. That\'s who it works best for. If you\'re using Ghost for some other purpose, that\'s fine too - but it might not be the best choice for you.</p>\n</li>\n<li>\n<p>The entire platform can be modified and customized to suit your needs, which is very powerful, but doing so <strong>does</strong> require some knowledge of code. Ghost is not necessarily a good platform for beginners or people who just want a simple personal blog.</p>\n</li>\n<li>\n<p>For the best experience we recommend downloading the <a href=\"https://ghost.org/downloads/\">Ghost Desktop App</a> for your computer, which is the best way to access your Ghost site on a desktop device.</p>\n</li>\n</ol>\n<p>Ghost is made by an independent non-profit organisation called the Ghost Foundation. We are 100% self funded by revenue from our <a href=\"https://ghost.org/pricing\">Ghost(Pro)</a> service, and every penny we make is re-invested into funding further development of free, open source technology for modern journalism.</p>\n<p>The main thing you\'ll want to read about next is probably: <a href=\"/the-editor/\">the Ghost editor</a>.</p>\n<p>Once you\'re done reading, you can simply delete the default <strong>Ghost</strong> user from your team to remove all of these introductory posts!</p>\n</div>',NULL,'Hey! Welcome to Ghost, it\'s great to have you :)\n\nWe know that first impressions are important, so we\'ve populated your new site\nwith some initial Getting Started  posts that will help you get familiar with\neverything in no time. This is the first one!\n\nThere are a few things that you should know up-front:\n 1. Ghost is designed for ambitious, professional publishers who want to\n    actively build a business around their content. That\'s who it works best\n    for. If you\'re using Ghost for some other purpose, that\'s fine too - but it\n    might not be the best choice for you.\n    \n    \n 2. The entire platform can be modified and customized to suit your needs, which\n    is very powerful, but doing so does  require some knowledge of code. Ghost\n    is not necessarily a good platform for beginners or people who just want a\n    simple personal blog.\n    \n    \n 3. For the best experience we recommend downloading the Ghost Desktop App\n    [https://ghost.org/downloads/]  for your computer, which is the best way to\n    access your Ghost site on a desktop device.\n    \n    \n\nGhost is made by an independent non-profit organisation called the Ghost\nFoundation. We are 100% self funded by revenue from our Ghost(Pro)\n[https://ghost.org/pricing]  service, and every penny we make is re-invested\ninto funding further development of free, open source technology for modern\njournalism.\n\nThe main thing you\'ll want to read about next is probably: the Ghost editor\n[/the-editor/].\n\nOnce you\'re done reading, you can simply delete the default Ghost  user from\nyour team to remove all of these introductory posts!','https://casper.ghost.org/v1.0.0/images/welcome.jpg',0,0,'published',NULL,'public',NULL,NULL,'5951f5fca366002ebd5dbef7','2017-11-10 00:05:01','1','2017-11-10 00:05:01','1','2017-11-10 00:05:07','1',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04efccf2ae72408fba6537','64cc1e35-70c6-409d-b25c-dbc9747e1a44','What are the Optimal Spaced Repetition Time Intervals?','what-are-the-optimal-spaced-repetition-time-intervals','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"\\n\\nOf course, we don’t just want a suitable distribution… we want the best distribution. After all, if spacing out your studying helps, there must be some optimal amount of space, right?\\n\\nPiotr Wozniak – no relation to the Woz who built Apple’s first computers – spent a ton of time researching this question.\\n\\nHe eventually integrated what he found into the first spaced repetition computer software, which he called SuperMemo. The algorithm that determines SuperMemo’s intervals is quite complex, but here’s a simplified, nutshell-version of some of his first optimal intervals:\\n\\nFirst repetition: 1 day\\nSecond repetition: 7 days\\nThird repetition: 16 days\\nFourth repetition: 35 days\\n\\nA study published in 2008 with over 1,300 subjects also attempted to answer this question, but this time with respect to a given test date. What they found is that the optimal gap between the first and second study sessions increases in relation to how far away the test is.\\n\\nBenedict Carey interpreted their data in How We Learn and came up with the following optimal intervals based on different test dates:\\n\\nStudy Gaps Related to Time-to-Test\\n\\nSo if you’ve got a test coming up in a week, you should do your first session today, and then do the next session either tomorrow or the day after. I’d also recommend adding a 3rd session the day before the test.\\n\\nIt’s important to know that these gaps are approximate – as with pretty much everything in brain/memory science, it’s hard to make completely specific recommendations that will work for everyone. Still, these numbers are close, and you should take them into account when you’re creating exam study schedules.\\n\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>Of course, we don’t just want a suitable distribution… we want the best distribution. After all, if spacing out your studying helps, there must be some optimal amount of space, right?</p>\n<p>Piotr Wozniak – no relation to the Woz who built Apple’s first computers – spent a ton of time researching this question.</p>\n<p>He eventually integrated what he found into the first spaced repetition computer software, which he called SuperMemo. The algorithm that determines SuperMemo’s intervals is quite complex, but here’s a simplified, nutshell-version of some of his first optimal intervals:</p>\n<p>First repetition: 1 day<br>\nSecond repetition: 7 days<br>\nThird repetition: 16 days<br>\nFourth repetition: 35 days</p>\n<p>A study published in 2008 with over 1,300 subjects also attempted to answer this question, but this time with respect to a given test date. What they found is that the optimal gap between the first and second study sessions increases in relation to how far away the test is.</p>\n<p>Benedict Carey interpreted their data in How We Learn and came up with the following optimal intervals based on different test dates:</p>\n<p>Study Gaps Related to Time-to-Test</p>\n<p>So if you’ve got a test coming up in a week, you should do your first session today, and then do the next session either tomorrow or the day after. I’d also recommend adding a 3rd session the day before the test.</p>\n<p>It’s important to know that these gaps are approximate – as with pretty much everything in brain/memory science, it’s hard to make completely specific recommendations that will work for everyone. Still, these numbers are close, and you should take them into account when you’re creating exam study schedules.</p>\n</div>',NULL,'Of course, we don’t just want a suitable distribution… we want the best\ndistribution. After all, if spacing out your studying helps, there must be some\noptimal amount of space, right?\n\nPiotr Wozniak – no relation to the Woz who built Apple’s first computers – spent\na ton of time researching this question.\n\nHe eventually integrated what he found into the first spaced repetition computer\nsoftware, which he called SuperMemo. The algorithm that determines SuperMemo’s\nintervals is quite complex, but here’s a simplified, nutshell-version of some of\nhis first optimal intervals:\n\nFirst repetition: 1 day\nSecond repetition: 7 days\nThird repetition: 16 days\nFourth repetition: 35 days\n\nA study published in 2008 with over 1,300 subjects also attempted to answer this\nquestion, but this time with respect to a given test date. What they found is\nthat the optimal gap between the first and second study sessions increases in\nrelation to how far away the test is.\n\nBenedict Carey interpreted their data in How We Learn and came up with the\nfollowing optimal intervals based on different test dates:\n\nStudy Gaps Related to Time-to-Test\n\nSo if you’ve got a test coming up in a week, you should do your first session\ntoday, and then do the next session either tomorrow or the day after. I’d also\nrecommend adding a 3rd session the day before the test.\n\nIt’s important to know that these gaps are approximate – as with pretty much\neverything in brain/memory science, it’s hard to make completely specific\nrecommendations that will work for everyone. Still, these numbers are close, and\nyou should take them into account when you’re creating exam study schedules.',NULL,0,0,'published',NULL,'public',NULL,NULL,'1','2017-11-10 00:16:12','1','2017-11-10 00:16:59','1','2017-11-10 00:16:53','1',NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04f00ff2ae72408fba6538','c8522ccb-9307-4a89-af20-a6075f32015b','new world record with Apache Spark','new-world-record-with-apache-spark','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"\\n\\nWe are excited to share with you that a joint effort by Nanjing University, Alibaba Group, and Databricks set a new world record in CloudSort, a well-established third-party benchmark. We together architected the most efficient way to sort 100 TB of data, using only $144.22 USD worth of cloud resources, 3X more cost-efficient than the previous world record. Through this benchmark, Databricks, along with our partners, demonstrated that the most efficient way to process data is to use Apache Spark in the cloud.\\n\\nDatabricks, in collaboration with the Alibaba Group and Nanjing University, set a new CloudSort benchmark of $1.44 per terabyte.\\n\\nThis adds to the 2014 GraySort record we won, and validates two major technological trends we believe in:\\n\\nOpen source software is the future of software evolution, and Spark continues to be the most efficient engine for data processing.\\nCloud computing is becoming the most cost-efficient and enabling architecture to deploy big data applications.\\n\\nIn the remainder of the blog post, we will explain the significance of the two benchmarks (CloudSort and GraySort), our records, and how they inspired major improvements in Spark such as Project Tungsten.\\n\\nGraySort Benchmark\\n\\nIt is easy to take for granted the incredible amount of computing power available today. As a beacon, the Sort Benchmark is a constant reminder of the journey taken and work accomplished by pioneers in computer systems of how we got here.\\n\\nStarted in 1985 by Turing Award winner Jim Gray, the benchmark measures the advances in computer software and hardware systems, and it is one of the most challenging benchmarks for computer systems. Participants in the past typically built specialized software and even hardware (e.g. special network topology) to maximize their chances of winning.\\n\\nThe original benchmark, called Datamation Sort, in 1985 required competing systems to sort 100 MB of data as fast as possible, regardless of the hardware resources used. 100 MB fits easily in the smallest USB stick you can find today, but back in 1985, it was a big challenge. The 1985 winning entry took 980 seconds. By 2001, this number was reduced to 0.44 seconds! To make the benchmark challenging, Datamation Sort was deprecated and a new TeraSort benchmark was created in 1998, changing the data size to 1TB.\\n\\nIn 2009, the 100 TB GraySort benchmark was created in honor of Jim Gray. Yahoo won the 2013 record using a 2100-node Hadoop cluster, sorting 100 TB of data in 72 minutes.\\n\\nIn 2014, our team at Databricks entered the competition using a distributed program built on top of Spark. Our system sorted 100 TB of data in 23 minutes, using only 207 machines on EC2. That is to say, Spark sorted the same data 3X faster using 10X fewer resources than the 2013 Hadoop entry. In addition to winning the benchmark, we also sorted 1 PB of data in 4 hours using a similar setup and achieved near linear scalability.\\n\\nThis 2014 win set a milestone: it was the first time a combination of open source software and cloud computing won the benchmark. In the past, only well-funded organizations could compete in the sort benchmark, because participants would need to acquire a sizable, costly cluster. But with the rise of the public cloud, anybody can leverage the elasticity and accomplish what was once only possible in a handful of companies.\\nCloudSort Benchmark\\n\\nThe GraySort Benchmark measures the time it takes to sort 100 TB of data regardless of the hardware resources used. A well designed sorting system is relatively linearly scalable. Once an organization creates a linearly scalable system, the chance of winning then depends to a large degree on the amount of money the organization is willing to spend in acquiring hardware resources.\\n\\nTo mitigate this, the benchmark committee in 2014 created a new category called CloudSort. Unlike the GraySort which picks the winner based purely on time, CloudSort favors the entry with the lowest cost, measured by public cloud pricing. This benchmark effectively measures the efficiency, i.e. ratio of performance to cost, of the cloud architecture (combination of software stack, hardware stack, and tuning).\\n\\nThe spirit of the CloudSort is that it should be accessible enough that everyone can “play” at all scales, and let the best system win. In its inception year, the research team from the University of California, San Diego built a specialized sorting program called TritonSort and sorted 100 TB of data on Amazon EC2 for only $451. The system was so efficient that no one was able to challenge it even a year later.\\n\\nThat finally changed this week when our joint effort beat it and set the new CloudSort record.\\nA New Cloud Record\\n\\nDatabricks, together with Nanjing University and Alibaba, formed a team called NADSort to compete this year. NADSort ran on 394 ecs.n1.large nodes on the AliCloud, each equipped with an Intel Haswell E5-2680 v3 processor, 8 GB of memory, and 4×135 GB SSD Cloud Disk. The sorting program was based on Databricks’ 2014 GraySort record-setting entry and adapted for better efficiency. You can find the details of NADSort in this technical report.\\n\\nIn the previous record for CloudSort, it cost nearly five dollars ($4.51) per terabyte, to sort 100 terabytes of data. Our optimizations and the cloud have reduced the per terabyte cost by two-thirds, and our new record stands at $1.44 per terabyte!\\n\\nWhat made this cost efficiency improvement possible?\\n\\n> Cost-effectiveness of cloud computing: Increased competition among major cloud providers has lowered the cost of resources, making deploying applications in the cloud economically feasible and scalable. In addition, cloud computing also enables use cases that were simply not possible before with on-demand resources and elasticity.\\n\\n> Efficiency of software: We have invested heavily in performance optimizations, with some of the most significant changes in the last two years. Innovations such as Project Tungsten, Catalyst, and whole-stage code generation, have benefited Apache Spark enormously, improving all aspects of the stack. In addition to the general improvements in Spark, our collaborators have also worked on improving shuffle specifically for the AliCloud environment.\\n\\n> Expertise in optimizing Spark and cloud-native architecture: As the creators of Spark, we continue to lead the way in execution optimization. In addition, we have developed deep expertise in operating and tuning cloud-native data architecture by operating tens of thousands of clusters at once for our customers and users. The expertise we developed in building the most efficient cloud architecture for data processing enabled us to push the boundary of cost-efficiency in addition to the innovations from providers.\\n\\nSignificance of Sorting in Distributed Data Processing\\n\\nYou might ask: what’s the significance of sorting, and why would we sort so much data?\\n\\nAt the core of sorting is the shuffle operation, which moves data across all machines. Shuffle underpins almost all distributed data processing workloads. For example, a SQL query joining two disparate data sources uses shuffle to move tuples that should be joined together onto the same machine, and collaborative filtering algorithms such as ALS rely on shuffle to send user/product ratings and weights across the network.\\n\\nMost data pipelines start with a large amount of raw data, but as the pipeline progresses, the amount of data is reduced due to filtering out irrelevant data or more compact representation of intermediate data. A SQL query on 100 TB of raw input data most likely only shuffles a tiny fraction of the 100 TB across the network, and the query optimizer can be smart to reduce the amount of data scanned. This pattern is also reflected in the naming of MapReduce itself.\\n\\nWe evaluate Spark using a lot of different benchmarks, e.g. TPC-H, TPC-DS. The sort benchmark, however, is by far the most challenging due to the way it stresses the execution path. Sorting 100 TB of input data requires shuffling 100 TB of data across the network. We can’t hide behind clever tricks such as data skipping or query optimizations to reduce the scale.\\n\\nThe above attributes make sorting a metric we frequently refer to when we seek to measure and improve Spark.\\n\\nThe optimizations we did for our 2014 GraySort record have led to important improvements to Spark itself in the last 2 years: Netty-based network module to improve network throughput, off-heap memory management to remove GC, Project Tungsten to improve CPU efficiency. We have learned more with our 2016 CloudSort record, and we will apply those learnings to our development on Spark and the Databricks platform.\\n\\nThe achievements of two world records in two years leave us humbled, yet they validate the technology trends we’ve invested in heavily: Spark and cloud computing. These achievements are also testament to the engineering prowess we posses. To leverage this expertise and get the best performance out of Spark in the cloud, sign up for a Databricks account to build your data platform.\\n\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>We are excited to share with you that a joint effort by Nanjing University, Alibaba Group, and Databricks set a new world record in CloudSort, a well-established third-party benchmark. We together architected the most efficient way to sort 100 TB of data, using only $144.22 USD worth of cloud resources, 3X more cost-efficient than the previous world record. Through this benchmark, Databricks, along with our partners, demonstrated that the most efficient way to process data is to use Apache Spark in the cloud.</p>\n<p>Databricks, in collaboration with the Alibaba Group and Nanjing University, set a new CloudSort benchmark of $1.44 per terabyte.</p>\n<p>This adds to the 2014 GraySort record we won, and validates two major technological trends we believe in:</p>\n<p>Open source software is the future of software evolution, and Spark continues to be the most efficient engine for data processing.<br>\nCloud computing is becoming the most cost-efficient and enabling architecture to deploy big data applications.</p>\n<p>In the remainder of the blog post, we will explain the significance of the two benchmarks (CloudSort and GraySort), our records, and how they inspired major improvements in Spark such as Project Tungsten.</p>\n<p>GraySort Benchmark</p>\n<p>It is easy to take for granted the incredible amount of computing power available today. As a beacon, the Sort Benchmark is a constant reminder of the journey taken and work accomplished by pioneers in computer systems of how we got here.</p>\n<p>Started in 1985 by Turing Award winner Jim Gray, the benchmark measures the advances in computer software and hardware systems, and it is one of the most challenging benchmarks for computer systems. Participants in the past typically built specialized software and even hardware (e.g. special network topology) to maximize their chances of winning.</p>\n<p>The original benchmark, called Datamation Sort, in 1985 required competing systems to sort 100 MB of data as fast as possible, regardless of the hardware resources used. 100 MB fits easily in the smallest USB stick you can find today, but back in 1985, it was a big challenge. The 1985 winning entry took 980 seconds. By 2001, this number was reduced to 0.44 seconds! To make the benchmark challenging, Datamation Sort was deprecated and a new TeraSort benchmark was created in 1998, changing the data size to 1TB.</p>\n<p>In 2009, the 100 TB GraySort benchmark was created in honor of Jim Gray. Yahoo won the 2013 record using a 2100-node Hadoop cluster, sorting 100 TB of data in 72 minutes.</p>\n<p>In 2014, our team at Databricks entered the competition using a distributed program built on top of Spark. Our system sorted 100 TB of data in 23 minutes, using only 207 machines on EC2. That is to say, Spark sorted the same data 3X faster using 10X fewer resources than the 2013 Hadoop entry. In addition to winning the benchmark, we also sorted 1 PB of data in 4 hours using a similar setup and achieved near linear scalability.</p>\n<p>This 2014 win set a milestone: it was the first time a combination of open source software and cloud computing won the benchmark. In the past, only well-funded organizations could compete in the sort benchmark, because participants would need to acquire a sizable, costly cluster. But with the rise of the public cloud, anybody can leverage the elasticity and accomplish what was once only possible in a handful of companies.<br>\nCloudSort Benchmark</p>\n<p>The GraySort Benchmark measures the time it takes to sort 100 TB of data regardless of the hardware resources used. A well designed sorting system is relatively linearly scalable. Once an organization creates a linearly scalable system, the chance of winning then depends to a large degree on the amount of money the organization is willing to spend in acquiring hardware resources.</p>\n<p>To mitigate this, the benchmark committee in 2014 created a new category called CloudSort. Unlike the GraySort which picks the winner based purely on time, CloudSort favors the entry with the lowest cost, measured by public cloud pricing. This benchmark effectively measures the efficiency, i.e. ratio of performance to cost, of the cloud architecture (combination of software stack, hardware stack, and tuning).</p>\n<p>The spirit of the CloudSort is that it should be accessible enough that everyone can “play” at all scales, and let the best system win. In its inception year, the research team from the University of California, San Diego built a specialized sorting program called TritonSort and sorted 100 TB of data on Amazon EC2 for only $451. The system was so efficient that no one was able to challenge it even a year later.</p>\n<p>That finally changed this week when our joint effort beat it and set the new CloudSort record.<br>\nA New Cloud Record</p>\n<p>Databricks, together with Nanjing University and Alibaba, formed a team called NADSort to compete this year. NADSort ran on 394 ecs.n1.large nodes on the AliCloud, each equipped with an Intel Haswell E5-2680 v3 processor, 8 GB of memory, and 4×135 GB SSD Cloud Disk. The sorting program was based on Databricks’ 2014 GraySort record-setting entry and adapted for better efficiency. You can find the details of NADSort in this technical report.</p>\n<p>In the previous record for CloudSort, it cost nearly five dollars ($4.51) per terabyte, to sort 100 terabytes of data. Our optimizations and the cloud have reduced the per terabyte cost by two-thirds, and our new record stands at $1.44 per terabyte!</p>\n<p>What made this cost efficiency improvement possible?</p>\n<blockquote>\n<p>Cost-effectiveness of cloud computing: Increased competition among major cloud providers has lowered the cost of resources, making deploying applications in the cloud economically feasible and scalable. In addition, cloud computing also enables use cases that were simply not possible before with on-demand resources and elasticity.</p>\n</blockquote>\n<blockquote>\n<p>Efficiency of software: We have invested heavily in performance optimizations, with some of the most significant changes in the last two years. Innovations such as Project Tungsten, Catalyst, and whole-stage code generation, have benefited Apache Spark enormously, improving all aspects of the stack. In addition to the general improvements in Spark, our collaborators have also worked on improving shuffle specifically for the AliCloud environment.</p>\n</blockquote>\n<blockquote>\n<p>Expertise in optimizing Spark and cloud-native architecture: As the creators of Spark, we continue to lead the way in execution optimization. In addition, we have developed deep expertise in operating and tuning cloud-native data architecture by operating tens of thousands of clusters at once for our customers and users. The expertise we developed in building the most efficient cloud architecture for data processing enabled us to push the boundary of cost-efficiency in addition to the innovations from providers.</p>\n</blockquote>\n<p>Significance of Sorting in Distributed Data Processing</p>\n<p>You might ask: what’s the significance of sorting, and why would we sort so much data?</p>\n<p>At the core of sorting is the shuffle operation, which moves data across all machines. Shuffle underpins almost all distributed data processing workloads. For example, a SQL query joining two disparate data sources uses shuffle to move tuples that should be joined together onto the same machine, and collaborative filtering algorithms such as ALS rely on shuffle to send user/product ratings and weights across the network.</p>\n<p>Most data pipelines start with a large amount of raw data, but as the pipeline progresses, the amount of data is reduced due to filtering out irrelevant data or more compact representation of intermediate data. A SQL query on 100 TB of raw input data most likely only shuffles a tiny fraction of the 100 TB across the network, and the query optimizer can be smart to reduce the amount of data scanned. This pattern is also reflected in the naming of MapReduce itself.</p>\n<p>We evaluate Spark using a lot of different benchmarks, e.g. TPC-H, TPC-DS. The sort benchmark, however, is by far the most challenging due to the way it stresses the execution path. Sorting 100 TB of input data requires shuffling 100 TB of data across the network. We can’t hide behind clever tricks such as data skipping or query optimizations to reduce the scale.</p>\n<p>The above attributes make sorting a metric we frequently refer to when we seek to measure and improve Spark.</p>\n<p>The optimizations we did for our 2014 GraySort record have led to important improvements to Spark itself in the last 2 years: Netty-based network module to improve network throughput, off-heap memory management to remove GC, Project Tungsten to improve CPU efficiency. We have learned more with our 2016 CloudSort record, and we will apply those learnings to our development on Spark and the Databricks platform.</p>\n<p>The achievements of two world records in two years leave us humbled, yet they validate the technology trends we’ve invested in heavily: Spark and cloud computing. These achievements are also testament to the engineering prowess we posses. To leverage this expertise and get the best performance out of Spark in the cloud, sign up for a Databricks account to build your data platform.</p>\n</div>',NULL,'We are excited to share with you that a joint effort by Nanjing University,\nAlibaba Group, and Databricks set a new world record in CloudSort, a\nwell-established third-party benchmark. We together architected the most\nefficient way to sort 100 TB of data, using only $144.22 USD worth of cloud\nresources, 3X more cost-efficient than the previous world record. Through this\nbenchmark, Databricks, along with our partners, demonstrated that the most\nefficient way to process data is to use Apache Spark in the cloud.\n\nDatabricks, in collaboration with the Alibaba Group and Nanjing University, set\na new CloudSort benchmark of $1.44 per terabyte.\n\nThis adds to the 2014 GraySort record we won, and validates two major\ntechnological trends we believe in:\n\nOpen source software is the future of software evolution, and Spark continues to\nbe the most efficient engine for data processing.\nCloud computing is becoming the most cost-efficient and enabling architecture to\ndeploy big data applications.\n\nIn the remainder of the blog post, we will explain the significance of the two\nbenchmarks (CloudSort and GraySort), our records, and how they inspired major\nimprovements in Spark such as Project Tungsten.\n\nGraySort Benchmark\n\nIt is easy to take for granted the incredible amount of computing power\navailable today. As a beacon, the Sort Benchmark is a constant reminder of the\njourney taken and work accomplished by pioneers in computer systems of how we\ngot here.\n\nStarted in 1985 by Turing Award winner Jim Gray, the benchmark measures the\nadvances in computer software and hardware systems, and it is one of the most\nchallenging benchmarks for computer systems. Participants in the past typically\nbuilt specialized software and even hardware (e.g. special network topology) to\nmaximize their chances of winning.\n\nThe original benchmark, called Datamation Sort, in 1985 required competing\nsystems to sort 100 MB of data as fast as possible, regardless of the hardware\nresources used. 100 MB fits easily in the smallest USB stick you can find today,\nbut back in 1985, it was a big challenge. The 1985 winning entry took 980\nseconds. By 2001, this number was reduced to 0.44 seconds! To make the benchmark\nchallenging, Datamation Sort was deprecated and a new TeraSort benchmark was\ncreated in 1998, changing the data size to 1TB.\n\nIn 2009, the 100 TB GraySort benchmark was created in honor of Jim Gray. Yahoo\nwon the 2013 record using a 2100-node Hadoop cluster, sorting 100 TB of data in\n72 minutes.\n\nIn 2014, our team at Databricks entered the competition using a distributed\nprogram built on top of Spark. Our system sorted 100 TB of data in 23 minutes,\nusing only 207 machines on EC2. That is to say, Spark sorted the same data 3X\nfaster using 10X fewer resources than the 2013 Hadoop entry. In addition to\nwinning the benchmark, we also sorted 1 PB of data in 4 hours using a similar\nsetup and achieved near linear scalability.\n\nThis 2014 win set a milestone: it was the first time a combination of open\nsource software and cloud computing won the benchmark. In the past, only\nwell-funded organizations could compete in the sort benchmark, because\nparticipants would need to acquire a sizable, costly cluster. But with the rise\nof the public cloud, anybody can leverage the elasticity and accomplish what was\nonce only possible in a handful of companies.\nCloudSort Benchmark\n\nThe GraySort Benchmark measures the time it takes to sort 100 TB of data\nregardless of the hardware resources used. A well designed sorting system is\nrelatively linearly scalable. Once an organization creates a linearly scalable\nsystem, the chance of winning then depends to a large degree on the amount of\nmoney the organization is willing to spend in acquiring hardware resources.\n\nTo mitigate this, the benchmark committee in 2014 created a new category called\nCloudSort. Unlike the GraySort which picks the winner based purely on time,\nCloudSort favors the entry with the lowest cost, measured by public cloud\npricing. This benchmark effectively measures the efficiency, i.e. ratio of\nperformance to cost, of the cloud architecture (combination of software stack,\nhardware stack, and tuning).\n\nThe spirit of the CloudSort is that it should be accessible enough that everyone\ncan “play” at all scales, and let the best system win. In its inception year,\nthe research team from the University of California, San Diego built a\nspecialized sorting program called TritonSort and sorted 100 TB of data on\nAmazon EC2 for only $451. The system was so efficient that no one was able to\nchallenge it even a year later.\n\nThat finally changed this week when our joint effort beat it and set the new\nCloudSort record.\nA New Cloud Record\n\nDatabricks, together with Nanjing University and Alibaba, formed a team called\nNADSort to compete this year. NADSort ran on 394 ecs.n1.large nodes on the\nAliCloud, each equipped with an Intel Haswell E5-2680 v3 processor, 8 GB of\nmemory, and 4×135 GB SSD Cloud Disk. The sorting program was based on\nDatabricks’ 2014 GraySort record-setting entry and adapted for better\nefficiency. You can find the details of NADSort in this technical report.\n\nIn the previous record for CloudSort, it cost nearly five dollars ($4.51) per\nterabyte, to sort 100 terabytes of data. Our optimizations and the cloud have\nreduced the per terabyte cost by two-thirds, and our new record stands at $1.44\nper terabyte!\n\nWhat made this cost efficiency improvement possible?\n\nCost-effectiveness of cloud computing: Increased competition among major cloud\nproviders has lowered the cost of resources, making deploying applications in\nthe cloud economically feasible and scalable. In addition, cloud computing also\nenables use cases that were simply not possible before with on-demand resources\nand elasticity.\n\nEfficiency of software: We have invested heavily in performance optimizations,\nwith some of the most significant changes in the last two years. Innovations\nsuch as Project Tungsten, Catalyst, and whole-stage code generation, have\nbenefited Apache Spark enormously, improving all aspects of the stack. In\naddition to the general improvements in Spark, our collaborators have also\nworked on improving shuffle specifically for the AliCloud environment.\n\nExpertise in optimizing Spark and cloud-native architecture: As the creators of\nSpark, we continue to lead the way in execution optimization. In addition, we\nhave developed deep expertise in operating and tuning cloud-native data\narchitecture by operating tens of thousands of clusters at once for our\ncustomers and users. The expertise we developed in building the most efficient\ncloud architecture for data processing enabled us to push the boundary of\ncost-efficiency in addition to the innovations from providers.\n\nSignificance of Sorting in Distributed Data Processing\n\nYou might ask: what’s the significance of sorting, and why would we sort so much\ndata?\n\nAt the core of sorting is the shuffle operation, which moves data across all\nmachines. Shuffle underpins almost all distributed data processing workloads.\nFor example, a SQL query joining two disparate data sources uses shuffle to move\ntuples that should be joined together onto the same machine, and collaborative\nfiltering algorithms such as ALS rely on shuffle to send user/product ratings\nand weights across the network.\n\nMost data pipelines start with a large amount of raw data, but as the pipeline\nprogresses, the amount of data is reduced due to filtering out irrelevant data\nor more compact representation of intermediate data. A SQL query on 100 TB of\nraw input data most likely only shuffles a tiny fraction of the 100 TB across\nthe network, and the query optimizer can be smart to reduce the amount of data\nscanned. This pattern is also reflected in the naming of MapReduce itself.\n\nWe evaluate Spark using a lot of different benchmarks, e.g. TPC-H, TPC-DS. The\nsort benchmark, however, is by far the most challenging due to the way it\nstresses the execution path. Sorting 100 TB of input data requires shuffling 100\nTB of data across the network. We can’t hide behind clever tricks such as data\nskipping or query optimizations to reduce the scale.\n\nThe above attributes make sorting a metric we frequently refer to when we seek\nto measure and improve Spark.\n\nThe optimizations we did for our 2014 GraySort record have led to important\nimprovements to Spark itself in the last 2 years: Netty-based network module to\nimprove network throughput, off-heap memory management to remove GC, Project\nTungsten to improve CPU efficiency. We have learned more with our 2016 CloudSort\nrecord, and we will apply those learnings to our development on Spark and the\nDatabricks platform.\n\nThe achievements of two world records in two years leave us humbled, yet they\nvalidate the technology trends we’ve invested in heavily: Spark and cloud\ncomputing. These achievements are also testament to the engineering prowess we\nposses. To leverage this expertise and get the best performance out of Spark in\nthe cloud, sign up for a Databricks account to build your data platform.',NULL,0,0,'published',NULL,'public',NULL,NULL,'1','2017-11-10 00:17:19','1','2017-11-10 00:25:56','1','2017-11-10 00:17:35','1',NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL),('5a04f02ef2ae72408fba6539','b5cf5579-5742-4080-abae-7bdd12b1a2d9','How to take a picture of the Milky Way','how-to-take-a-picture-of-the-milky-way','{\"version\":\"0.3.1\",\"markups\":[],\"atoms\":[],\"cards\":[[\"card-markdown\",{\"cardName\":\"card-markdown\",\"markdown\":\"\\n\\nIn the past couple of years, lots of nature photographers have been taking and publishing pictures like this one. I\'m glad, not just because I like the Milky Way, but more importantly because I want people to appreciate the starry sky and the fact that excessive city lights keep you from seeing it.\\n\\nHow do you take a picture like this?\\n\\nYou probably need a DSLR or a pro-grade mirrorless camera; miniaturized cameras with tiny lenses and tiny sensors don\'t do as well. But try what you have.\\n\\nFirst, find the Milky Way. The bright part of it is not always in the sky. At north temperate latitudes, look to the south, before midnight, from August to October.\\n\\nTo get a good view, you\'ll need to go out in the country. I took this picture at the Deerlick Astronomy Village.\\n\\nThen put the camera on a fixed tripod. Focus on infinity, preferably by focusing on a bright star or very distant light; autofocusers can\'t see the stars. Some cameras have a mountain symbol that you can choose to lock the focus at infinity.\\n\\nExpose anywhere from 3 to 30 seconds with a wide-angle lens wide open (f/4 or wider) and a high ISO setting. The longer the exposure, the more the stars will lengthen into short lines rather than dots due to the rotation of the earth.\\n\\nThis one was 6 seconds at ISO 12,800 with a Nikon D5300 and a 1990s-vintage Sigma 24-mm lens at f/2.8, with long-exposure noise reduction. Brightness and contrast were adjusted in Photoshop, where further noise reduction was done.\\n\"}]],\"sections\":[[10,0]]}','<div class=\"kg-card-markdown\"><p>In the past couple of years, lots of nature photographers have been taking and publishing pictures like this one. I\'m glad, not just because I like the Milky Way, but more importantly because I want people to appreciate the starry sky and the fact that excessive city lights keep you from seeing it.</p>\n<p>How do you take a picture like this?</p>\n<p>You probably need a DSLR or a pro-grade mirrorless camera; miniaturized cameras with tiny lenses and tiny sensors don\'t do as well. But try what you have.</p>\n<p>First, find the Milky Way. The bright part of it is not always in the sky. At north temperate latitudes, look to the south, before midnight, from August to October.</p>\n<p>To get a good view, you\'ll need to go out in the country. I took this picture at the Deerlick Astronomy Village.</p>\n<p>Then put the camera on a fixed tripod. Focus on infinity, preferably by focusing on a bright star or very distant light; autofocusers can\'t see the stars. Some cameras have a mountain symbol that you can choose to lock the focus at infinity.</p>\n<p>Expose anywhere from 3 to 30 seconds with a wide-angle lens wide open (f/4 or wider) and a high ISO setting. The longer the exposure, the more the stars will lengthen into short lines rather than dots due to the rotation of the earth.</p>\n<p>This one was 6 seconds at ISO 12,800 with a Nikon D5300 and a 1990s-vintage Sigma 24-mm lens at f/2.8, with long-exposure noise reduction. Brightness and contrast were adjusted in Photoshop, where further noise reduction was done.</p>\n</div>',NULL,'In the past couple of years, lots of nature photographers have been taking and\npublishing pictures like this one. I\'m glad, not just because I like the Milky\nWay, but more importantly because I want people to appreciate the starry sky and\nthe fact that excessive city lights keep you from seeing it.\n\nHow do you take a picture like this?\n\nYou probably need a DSLR or a pro-grade mirrorless camera; miniaturized cameras\nwith tiny lenses and tiny sensors don\'t do as well. But try what you have.\n\nFirst, find the Milky Way. The bright part of it is not always in the sky. At\nnorth temperate latitudes, look to the south, before midnight, from August to\nOctober.\n\nTo get a good view, you\'ll need to go out in the country. I took this picture at\nthe Deerlick Astronomy Village.\n\nThen put the camera on a fixed tripod. Focus on infinity, preferably by focusing\non a bright star or very distant light; autofocusers can\'t see the stars. Some\ncameras have a mountain symbol that you can choose to lock the focus at\ninfinity.\n\nExpose anywhere from 3 to 30 seconds with a wide-angle lens wide open (f/4 or\nwider) and a high ISO setting. The longer the exposure, the more the stars will\nlengthen into short lines rather than dots due to the rotation of the earth.\n\nThis one was 6 seconds at ISO 12,800 with a Nikon D5300 and a 1990s-vintage\nSigma 24-mm lens at f/2.8, with long-exposure noise reduction. Brightness and\ncontrast were adjusted in Photoshop, where further noise reduction was done.',NULL,0,0,'published',NULL,'public',NULL,NULL,'1','2017-11-10 00:17:50','1','2017-11-10 00:18:06','1','2017-11-10 00:18:06','1',NULL,'','',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `posts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `posts_tags`
+--
+
+DROP TABLE IF EXISTS `posts_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `posts_tags` (
+  `id` varchar(24) NOT NULL,
+  `post_id` varchar(24) NOT NULL,
+  `tag_id` varchar(24) NOT NULL,
+  `sort_order` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `posts_tags_post_id_foreign` (`post_id`),
+  KEY `posts_tags_tag_id_foreign` (`tag_id`),
+  CONSTRAINT `posts_tags_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`),
+  CONSTRAINT `posts_tags_post_id_foreign` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `posts_tags`
+--
+
+LOCK TABLES `posts_tags` WRITE;
+/*!40000 ALTER TABLE `posts_tags` DISABLE KEYS */;
+INSERT INTO `posts_tags` VALUES ('5a04ed3c663ac7403dd020da','5a04ed2d663ac7403dd02030','5a04ed2d663ac7403dd02037',0),('5a04ed3c663ac7403dd020db','5a04ed2d663ac7403dd02031','5a04ed2d663ac7403dd02037',0),('5a04ed3c663ac7403dd020dc','5a04ed2d663ac7403dd02032','5a04ed2d663ac7403dd02037',0),('5a04ed3c663ac7403dd020dd','5a04ed2d663ac7403dd02033','5a04ed2d663ac7403dd02037',0),('5a04ed3c663ac7403dd020de','5a04ed2d663ac7403dd02034','5a04ed2d663ac7403dd02037',0),('5a04ed3c663ac7403dd020df','5a04ed2d663ac7403dd02035','5a04ed2d663ac7403dd02037',0),('5a04ed3c663ac7403dd020e0','5a04ed2d663ac7403dd02036','5a04ed2d663ac7403dd02037',0);
+/*!40000 ALTER TABLE `posts_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `refreshtokens`
+--
+
+DROP TABLE IF EXISTS `refreshtokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `refreshtokens` (
+  `id` varchar(24) NOT NULL,
+  `token` varchar(191) NOT NULL,
+  `user_id` varchar(24) NOT NULL,
+  `client_id` varchar(24) NOT NULL,
+  `expires` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `refreshtokens_token_unique` (`token`),
+  KEY `refreshtokens_user_id_foreign` (`user_id`),
+  KEY `refreshtokens_client_id_foreign` (`client_id`),
+  CONSTRAINT `refreshtokens_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
+  CONSTRAINT `refreshtokens_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `refreshtokens`
+--
+
+LOCK TABLES `refreshtokens` WRITE;
+/*!40000 ALTER TABLE `refreshtokens` DISABLE KEYS */;
+INSERT INTO `refreshtokens` VALUES ('5a04efb7f2ae72408fba6535','Rg5njsNnAM8oXAlCwrlR25yoG1wfsh3MX8sz7j5UP4lUS6AsDT7fMa8EmuftXGehA9D3wEcdzXpvdzAAl9H8mdYL1vsYriTo0BPtUFDlFjjMFDkxLHtrpi12NAtsoT50Peh6Wq19f52BTUauHi7DpB4dS9ukw1RLgDRAOqtyWq9ndR4fjDDSIV8ngCXsKqE','1','5a04ed2e663ac7403dd02038',1526040951894);
+/*!40000 ALTER TABLE `refreshtokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `roles` (
+  `id` varchar(24) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(2000) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `roles_name_unique` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles`
+--
+
+LOCK TABLES `roles` WRITE;
+/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES ('5a04ed2e663ac7403dd0203c','Administrator','Administrators','2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd0203d','Editor','Editors','2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd0203e','Author','Authors','2017-11-10 00:05:02','1','2017-11-10 00:05:02','1'),('5a04ed2e663ac7403dd0203f','Owner','Blog Owner','2017-11-10 00:05:02','1','2017-11-10 00:05:02','1');
+/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `roles_users`
+--
+
+DROP TABLE IF EXISTS `roles_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `roles_users` (
+  `id` varchar(24) NOT NULL,
+  `role_id` varchar(24) NOT NULL,
+  `user_id` varchar(24) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles_users`
+--
+
+LOCK TABLES `roles_users` WRITE;
+/*!40000 ALTER TABLE `roles_users` DISABLE KEYS */;
+INSERT INTO `roles_users` VALUES ('5a04ed36663ac7403dd02073','5a04ed2e663ac7403dd0203e','5951f5fca366002ebd5dbef7'),('5a04ed3c663ac7403dd020e1','5a04ed2e663ac7403dd0203f','1');
+/*!40000 ALTER TABLE `roles_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `settings`
+--
+
+DROP TABLE IF EXISTS `settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `settings` (
+  `id` varchar(24) NOT NULL,
+  `key` varchar(50) NOT NULL,
+  `value` text,
+  `type` varchar(50) NOT NULL DEFAULT 'core',
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `settings_key_unique` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `settings`
+--
+
+LOCK TABLES `settings` WRITE;
+/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+INSERT INTO `settings` VALUES ('5a04ed47a69ecc404ea42f41','db_hash','d038f3f0-6985-49fe-8f17-e1909bbe91ac','core','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f42','next_update_check','1510359058','core','2017-11-10 00:05:27','1','2017-11-10 00:10:57','1'),('5a04ed47a69ecc404ea42f43','display_update_notification',NULL,'core','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f44','seen_notifications','[]','core','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f45','title','How to take a picture of the Milky way','blog','2017-11-10 00:05:27','1','2017-11-10 00:15:51','1'),('5a04ed47a69ecc404ea42f46','description','Thoughts, stories and ideas.','blog','2017-11-10 00:05:27','1','2017-11-10 00:15:51','1'),('5a04ed47a69ecc404ea42f47','logo','https://casper.ghost.org/v1.0.0/images/ghost-logo.svg','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f48','cover_image','https://casper.ghost.org/v1.0.0/images/blog-cover.jpg','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f49','icon','','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f4a','default_locale','en','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f4b','active_timezone','Etc/UTC','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f4c','force_i18n','true','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f4d','permalinks','/:slug/','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f4e','amp','true','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f4f','ghost_head','','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f50','ghost_foot','','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f51','facebook','','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f52','twitter','','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f53','labs','{\"publicAPI\": true}','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f54','navigation','[{\"label\":\"Home\", \"url\":\"/\"}]','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f55','slack','[{\"url\":\"\"}]','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f56','unsplash','{\"isActive\": true}','blog','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f57','active_theme','casper','theme','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f58','active_apps','[]','app','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f59','installed_apps','[]','app','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f5a','is_private','false','private','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f5b','password','','private','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1'),('5a04ed47a69ecc404ea42f5c','public_hash','b9cf45d012fb892ce5463675a4b73c','private','2017-11-10 00:05:27','1','2017-11-10 00:05:27','1');
+/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `subscribers`
+--
+
+DROP TABLE IF EXISTS `subscribers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `subscribers` (
+  `id` varchar(24) NOT NULL,
+  `name` varchar(191) DEFAULT NULL,
+  `email` varchar(191) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'pending',
+  `post_id` varchar(24) DEFAULT NULL,
+  `subscribed_url` varchar(2000) DEFAULT NULL,
+  `subscribed_referrer` varchar(2000) DEFAULT NULL,
+  `unsubscribed_url` varchar(2000) DEFAULT NULL,
+  `unsubscribed_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `subscribers_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `subscribers`
+--
+
+LOCK TABLES `subscribers` WRITE;
+/*!40000 ALTER TABLE `subscribers` DISABLE KEYS */;
+/*!40000 ALTER TABLE `subscribers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tags`
+--
+
+DROP TABLE IF EXISTS `tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tags` (
+  `id` varchar(24) NOT NULL,
+  `name` varchar(191) NOT NULL,
+  `slug` varchar(191) NOT NULL,
+  `description` text,
+  `feature_image` varchar(2000) DEFAULT NULL,
+  `parent_id` varchar(191) DEFAULT NULL,
+  `visibility` varchar(50) NOT NULL DEFAULT 'public',
+  `meta_title` varchar(2000) DEFAULT NULL,
+  `meta_description` varchar(2000) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tags_slug_unique` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tags`
+--
+
+LOCK TABLES `tags` WRITE;
+/*!40000 ALTER TABLE `tags` DISABLE KEYS */;
+INSERT INTO `tags` VALUES ('5a04ed2d663ac7403dd02037','Getting Started','getting-started',NULL,NULL,NULL,'public',NULL,NULL,'2017-11-10 00:05:01','1','2017-11-10 00:05:01','1');
+/*!40000 ALTER TABLE `tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` varchar(24) NOT NULL,
+  `name` varchar(191) NOT NULL,
+  `slug` varchar(191) NOT NULL,
+  `ghost_auth_access_token` varchar(32) DEFAULT NULL,
+  `ghost_auth_id` varchar(24) DEFAULT NULL,
+  `password` varchar(60) NOT NULL,
+  `email` varchar(191) NOT NULL,
+  `profile_image` varchar(2000) DEFAULT NULL,
+  `cover_image` varchar(2000) DEFAULT NULL,
+  `bio` text,
+  `website` varchar(2000) DEFAULT NULL,
+  `location` text,
+  `facebook` varchar(2000) DEFAULT NULL,
+  `twitter` varchar(2000) DEFAULT NULL,
+  `accessibility` text,
+  `status` varchar(50) NOT NULL DEFAULT 'active',
+  `locale` varchar(6) DEFAULT NULL,
+  `visibility` varchar(50) NOT NULL DEFAULT 'public',
+  `meta_title` varchar(2000) DEFAULT NULL,
+  `meta_description` varchar(2000) DEFAULT NULL,
+  `tour` text,
+  `last_seen` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` varchar(24) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` varchar(24) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_slug_unique` (`slug`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES ('1','sathvik','sathvik',NULL,NULL,'$2a$10$iO9H3AzsqAMRSF/vnoeWSu/kZqwAxz6wYGAtB1n3iYB9hO0BYwsNO','sathvikl@gmail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'active',NULL,'public',NULL,NULL,'[\"using-the-editor\",\"getting-started\"]','2017-11-10 00:15:51','2017-11-10 00:05:05','1','2017-11-10 00:24:17','1'),('5951f5fca366002ebd5dbef7','Ghost','ghost',NULL,NULL,'$2a$10$2J5oKhB6IY4/Bp1FjLZAHOPJCR4byacwxbcQuvyqDDPe7tl1nqmhW','ghost-author@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'active',NULL,'public',NULL,NULL,NULL,NULL,'2017-11-10 00:05:08','1','2017-11-10 00:05:08','1');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-11-09 17:04:29
