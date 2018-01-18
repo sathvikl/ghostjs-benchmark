@@ -79,8 +79,8 @@ config = {
             client: 'mysql',
             connection: {
                 host: '127.0.0.1',
-				user: 'sathvikl',
-				password: 'sathvikl',
+				user: 'testuser',
+				password: 'testpass',
 				database: 'ghost_db',
 				charset: 'utf8'
             },
@@ -95,6 +95,7 @@ config = {
             // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
             port: '8013'
         },
+        logging:false,
         // #### Paths
         // Specify where your content directory lives
         paths: {
