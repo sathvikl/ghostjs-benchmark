@@ -1,12 +1,17 @@
 {
+    "url": "http://127.0.0.1:8013",
+    "server": {
+        "port": 8013
+    },
     "database": {
         "client": "mysql",
         "connection": {
             "host"     : "127.0.0.1",
-            "user"     : "root",
-            "password" : "intel",
-            "database" : "ghost"
-        }
+            "user"     : "testuser",
+            "password" : "testpass",
+            "database" : "ghost_db"
+        },
+        "debug": false
     },
     "paths": {
         "contentPath": "content/"
@@ -16,6 +21,6 @@
         "rotation": {
             "enabled": true
         },
-        "transports": ["file", "stdout"]
+        "transports": ["file"]
     }
 }
