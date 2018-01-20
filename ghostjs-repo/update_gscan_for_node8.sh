@@ -1,11 +1,7 @@
 #!/bin/bash
 
-if [ -z "$1" ]
-  then
-    NPM=`which npm`
-else
-    NPM=$1
-fi
+NPM=`which npm`
+YARN=`which yarn`
 
 ghost_version=`grep -A 1 "\"name\": \"ghost\"" package.json | grep version | awk {'print $2'} | cut -d, -f1`
 echo -e "Ghost Version used: $ghost_version"  
@@ -22,5 +18,5 @@ if  [ "$ghost_version" = "\"0.11.7\"" ]; then
   popd
   exit 0
 elif [ "$ghost_version" = "\"1.17.1\"" ]; then
-  GHOST_NODE_VERSION_CHECK=false yarn install 
+  GHOST_NODE_VERSION_CHECK=false $YARN install --ignore-engines
 fi
