@@ -25,10 +25,11 @@ config = {
             client: 'mysql',
             connection: {
                 host: '127.0.0.1',
-				user: 'testuser',
-				password: 'testpass',
-				database: 'ghost_db',
-				charset: 'utf8'
+                port: '3000',
+		user: 'testuser',
+		password: 'testpass',
+		database: 'ghost_db',
+		charset: 'utf8'
             },
             debug: false
         },
