@@ -11,7 +11,7 @@ config = {
     // When running Ghost in the wild, use the production environment.
     // Configure your URL and mail settings here
     production: {
-        url: 'http://localhost:8103',
+        url: 'http://localhost:8013',
         mail: {},
         /*
         database: {
@@ -25,10 +25,11 @@ config = {
             client: 'mysql',
             connection: {
                 host: '127.0.0.1',
-				user: 'sathvikl',
-				password: 'sathvikl',
-				database: 'ghost_db',
-				charset: 'utf8'
+                port: '3000',
+		user: 'testuser',
+		password: 'testpass',
+		database: 'ghost_db',
+		charset: 'utf8'
             },
             debug: false
         },
@@ -36,7 +37,8 @@ config = {
         server: {
             host: '127.0.0.1',
             port: '8013'
-        }
+        },
+        logging:false
     },
 
     // ### Development **(default)**
@@ -78,8 +80,8 @@ config = {
             client: 'mysql',
             connection: {
                 host: '127.0.0.1',
-				user: 'sathvikl',
-				password: 'sathvikl',
+				user: 'testuser',
+				password: 'testpass',
 				database: 'ghost_db',
 				charset: 'utf8'
             },
@@ -94,6 +96,7 @@ config = {
             // Port to be passed to node's `net.Server#listen()`, for iisnode set this to `process.env.PORT`
             port: '8013'
         },
+        logging:false,
         // #### Paths
         // Specify where your content directory lives
         paths: {
