@@ -28,7 +28,7 @@ CREATE DATABASE ghost_db;
 ```
 Then log out of the MySQL shell and type the following on the command line:
 ```
-mysql -u [username] -p ghost_db < ghost-db-dump.txt
+mysql -u [username] -p ghost_db < ghost-db.mysql
 ```
 With that, you have imported ghost_db benchmark database into your destination system's MySQL.
 
@@ -55,6 +55,8 @@ Last end-point's content is copied from https://databricks.com/blog/2016/11/14/s
   
 On a Haswell 4-core Desktop CPU, Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz 
 delivers a RPS of 169 with ab 
+
+
 With Ghost.js v0.11
 ```
 ab -n 10000 -c 8 http://127.0.0.1:8013/new-world-record-with-apache-spark/
