@@ -20,9 +20,9 @@ More info about Ghost.js is at [Supported Node.js versions](http://support.ghost
 Currently start-up and initialization of the database is yet to be automated.   
 The benchmark's [config.js](https://github.com/sathvikl/ghostjs-benchmark/blob/bb75aa9877ce8f425279d7ad434a18c8d391422e/ghostjs-repo/config.js#L24) defaults to using MySQL database.  
 
-1. create an account in the mysql database and copy the information to [config.js for Ghost](https://github.com/sathvikl/ghostjs-benchmark/blob/bb75aa9877ce8f425279d7ad434a18c8d391422e/ghostjs-repo/config.js#L28)
+1. create an account in the mysql database and copy the information to [config.production.json for Ghost](https://github.com/sathvikl/ghostjs-benchmark/blob/master/ghostjs-repo/core/server/config/env/config.production.json#L11)
 
-2. Import the contents from the mysql dump file [ghost-db-dump.txt](https://github.com/sathvikl/ghostjs-benchmark/blob/master/ghost-db-dump.txt) into the ghost_db database. 
+2. Import the contents from the mysql dump file [ghost-db.mysql](https://github.com/sathvikl/ghostjs-benchmark/blob/master/ghost-db.mysql) into the ghost_db database. 
 ```MYSQL Shell
 CREATE DATABASE ghost_db;
 ```
