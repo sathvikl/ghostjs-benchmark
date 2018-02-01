@@ -18,7 +18,7 @@ More info about Ghost.js is at [Supported Node.js versions](http://support.ghost
 ### Start up of Ghost.js benchamark
 
 Currently start-up and initialization of the database is yet to be automated.   
-The benchmark's [config.js](https://github.com/sathvikl/ghostjs-benchmark/blob/bb75aa9877ce8f425279d7ad434a18c8d391422e/ghostjs-repo/config.js#L24) defaults to using MySQL database.  
+The benchmark's [config.production.json](https://github.com/sathvikl/ghostjs-benchmark/blob/master/ghostjs-repo/core/server/config/env/config.production.json) defaults to using MySQL database.  
 
 1. create an account in the mysql database and copy the information to [config.production.json for Ghost](https://github.com/sathvikl/ghostjs-benchmark/blob/master/ghostjs-repo/core/server/config/env/config.production.json#L11)
 
@@ -40,7 +40,7 @@ npm install
 
 4. switch to a compatible version of Node.js and start the server  
 For a single instance `NODE_ENV=production GHOST_NODE_VERSION_CHECK=false node index.js`  
-For a cluster instance `NODE_ENV=production GHOST_NODE_VERSION_CHECK=false node cluster-index.js`  
+ 
   
 `Listening on http://localhost:8013` :tada:
 
@@ -55,6 +55,7 @@ Last end-point's content is copied from https://databricks.com/blog/2016/11/14/s
   
 On a Haswell 4-core Desktop CPU, Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz 
 delivers a RPS of 169 with ab 
+With Ghost.js v0.11
 ```
 ab -n 10000 -c 8 http://127.0.0.1:8013/new-world-record-with-apache-spark/
 This is ApacheBench, Version 2.3 <$Revision: 1604373 $>
